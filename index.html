@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 67 - Build 7.6 Custom</title>
+    <style>
+        :root {
+            --primary-color: #00f0ff;
+            --secondary-color: #7000ff;
+            --glass-opacity: 0.75;
+            --bg-glass: rgba(10, 15, 30, var(--glass-opacity));
+            --border-glass: rgba(0, 240, 255, 0.25);
+            --text-color: #ffffff;
+            --window-round: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #050510;
+            background-size: cover;
+            background-position: center;
+            color: var(--text-color);
+            transition: background 0.3s ease;
+        }
+
+        #bg-canvas, #fx-canvas {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #desktop {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: calc(100vh - 50px);
+            z-index: 2;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* Иконки */
+        .shortcut {
+            width: 95px; height: 100px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; cursor: pointer; border-radius: 8px; transition: all 0.2s;
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .shortcut:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+        .shortcut .icon { font-size: 40px; margin-bottom: 5px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
+        .shortcut .title { font-size: 12px; font-weight: 500; text-shadow: 0 2px 4px rgba(0,0,0,0.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+
+        /* Контекстные меню */
+        .custom-context-menu {
+            position: absolute; background: rgba(10, 12, 22, 0.95); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass); border-radius: 8px; width: 180px;
+            display: none; flex-direction: column; padding: 6px 0; z-index: 100000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+        }
+        .menu-item { padding: 10px 15px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.1s; }
+        .menu-item:hover { background: var(--primary-color); color: #000; font-weight: 600; }
+        .menu-item.disabled { color: #555; cursor: not-allowed; }
+        .menu-item.disabled:hover { background: transparent; color: #555; font-weight: normal; }
+
+        /* Таскбар */
+        #taskbar {
+            width: 100%; height: 50px; background: var(--bg-glass); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-glass); position: absolute; bottom: 0; left: 0;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 9999;
+            transition: background 0.2s ease;
+        }
+        #start-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none; color: white; padding: 8px 18px; border-radius: 4px;
+            font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 0 10px var(--primary-color);
+        }
+        #start-btn:hover { filter: brightness(1.2); }
+
+        /* Пуск */
+        #start-menu {
+            position: absolute; bottom: 60px; left: 15px; width: 320px;
+            background: var(--bg-glass); backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass); border-radius: var(--window-round);
+            padding: 15px; display: none; flex-direction: column; gap: 8px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7); z-index: 10000;
+            transition: background 0.2s ease;
+        }
+        #start-menu.active { display: flex; }
+        .start-item { padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
+        .start-item:hover { background: rgba(255, 255, 255, 0.15); border-left: 3px solid var(--primary-color); }
+
+        /* Окна */
+        .window {
+            position: absolute; width: 560px; height: 420px; min-width: 320px; min-height: 240px;
+            background: var(--bg-glass); backdrop-filter: blur(25px); border: 1px solid var(--border-glass);
+            border-radius: var(--window-round); box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+            display: none; flex-direction: column; overflow: hidden; z-index: 10; resize: both;
+            transition: background 0.2s ease;
+        }
+        .window.active { display: flex; }
+        .window.minimized { display: none !important; }
+        .window.maximized { width: 100% !important; height: calc(100vh - 50px) !important; top: 0 !important; left: 0 !important; resize: none !important; }
+
+        .window-header { background: rgba(0, 0, 0, 0.4); display: flex; justify-content: space-between; align-items: center; cursor: move; height: 38px; border-bottom: 1px solid var(--border-glass); flex-shrink: 0; }
+        .window-title { padding-left: 14px; font-size: 13px; font-weight: 500; }
+        .window-controls { display: flex; height: 100%; }
+        .win-btn { width: 45px; height: 100%; border: none; background: transparent; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s; }
+        .win-btn:hover { background: rgba(255, 255, 255, 0.1); }
+        .btn-close:hover { background: #e81123 !important; }
+        .window-content { padding: 15px; flex-grow: 1; overflow: auto; height: calc(100% - 38px); position: relative; }
+
+        /* Проводник */
+        .explorer-layout { display: flex; height: 100%; gap: 15px; }
+        .sidebar { width: 140px; border-right: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 5px; }
+        .sidebar-item { padding: 8px; cursor: pointer; border-radius: 4px; font-size: 13px; }
+        .sidebar-item:hover { background: rgba(255, 255, 255, 0.1); }
+        .file-grid { display: flex; flex-wrap: wrap; gap: 15px; flex-grow: 1; align-content: flex-start; height: 100%; min-height: 200px; }
+        .file-item { width: 85px; text-align: center; cursor: pointer; padding: 8px; border-radius: 6px; border: 1px solid transparent; height: 85px; }
+        .file-item:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255,255,255,0.1); }
+
+        /* Paint */
+        .paint-layout { display: flex; flex-direction: column; height: 100%; gap: 8px; }
+        .paint-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; border: 1px solid var(--border-glass); }
+        .paint-canvas-container { flex-grow: 1; background: #222; border-radius: 6px; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center; }
+        #paintCanvas { background: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: crosshair; }
+
+        /* Консоль */
+        .console-log { width: 100%; height: calc(100% - 35px); background: rgba(0,0,0,0.85); font-family: monospace; font-size: 13px; color: var(--primary-color); padding: 10px; overflow-y: auto; border-radius: 6px 6px 0 0; border: 1px solid var(--border-glass); }
+        .console-input-row { display: flex; background: #000; border: 1px solid var(--border-glass); border-top: none; border-radius: 0 0 6px 6px; padding: 5px; align-items: center; }
+        .console-prefix { color: var(--primary-color); font-family: monospace; padding-left: 5px; font-size: 13px; }
+        .console-input { flex-grow: 1; background: transparent; border: none; color: #fff; font-family: monospace; font-size: 13px; padding-left: 5px; outline: none; }
+
+        /* Калькулятор */
+        .calc-screen { width: 100%; height: 50px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); text-align: right; padding: 10px; font-size: 24px; color: white; margin-bottom: 10px; outline: none; }
+        .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: white; font-size: 18px; cursor: pointer; border-radius: 4px; }
+        .calc-btn:hover { background: var(--primary-color); color: black; }
+
+        /* Кнопки и Слайдеры */
+        .custom-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 6px; }
+        .sys-select { background: #000; color: #fff; border: 1px solid var(--border-glass); padding: 6px; border-radius: 4px; outline: none; font-size: 13px; cursor: pointer; }
+        button.action-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-glass); color: white; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 13px; }
+        button.action-btn:hover { background: var(--primary-color); color: black; font-weight: bold; box-shadow: 0 0 10px var(--primary-color); }
+        textarea { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: white; outline: none; resize: none; border-radius: 6px;}
+
+        /* Поля ввода установщика */
+        .control-group { margin-bottom: 12px; }
+        .control-group label { display: block; font-size: 13px; margin-bottom: 5px; color: #ccc; }
+        .control-group input[type="text"] { width: 100%; padding: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px; outline: none; font-size: 13px; }
+        .file-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+        .file-wrapper input[type="file"] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+        /* Экран перезагрузки */
+        #reboot-screen { position: fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:99999; display:none; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; }
+        .spinner { width: 50px; height: 50px; border: 5px solid rgba(0,240,255,0.2); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <input type="file" id="wallpaper-upload" accept="image/*" style="display:none;" onchange="loadWallpaperFile(this)">
+
+    <div id="desktop-menu" class="custom-context-menu">
+        <div class="menu-item" id="menu-paste-item" onclick="contextPasteFile()">📋 Вставить файл</div>
+        <div class="menu-item" onclick="openWindow('win-settings')">⚙️ Персонализация</div>
+        <div class="menu-item" onclick="triggerResetReboot()" style="color:#ff5f56;">🔄 Сброс и Перезагрузка</div>
+    </div>
+
+    <div id="file-menu" class="custom-context-menu">
+        <div class="menu-item" onclick="contextOpenFile()">👁️ Открыть</div>
+        <div class="menu-item" onclick="contextCutFile()">✂️ Вырезать</div>
+        <div class="menu-item" onclick="contextCopyFile()">📋 Копировать</div>
+        <div class="menu-item" id="menu-delete-item" onclick="contextDeleteFile()" style="color:#ff5f56;">🗑️ Удалить</div>
+    </div>
+
+    <div id="reboot-screen">
+        <div class="spinner"></div>
+        <h2 id="reboot-text" style="color:#fff; letter-spacing:1px;">Перезагрузка Windows 67...</h2>
+    </div>
+
+    <div id="desktop">
+        <div class="shortcut" id="sh-win-explorer" onclick="openWindow('win-explorer')">
+            <div class="icon">📁</div>
+            <div class="title">Этот ПК</div>
+        </div>
+        <div class="shortcut" id="sh-win-paint" onclick="openWindow('win-paint')">
+            <div class="icon">🎨</div>
+            <div class="title">Paint</div>
+        </div>
+        <div class="shortcut" id="sh-win-console" onclick="openWindow('win-console')">
+            <div class="icon">💻</div>
+            <div class="title">Консоль</div>
+        </div>
+        <div class="shortcut" id="sh-win-calc" onclick="openWindow('win-calc')">
+            <div class="icon">🧮</div>
+            <div class="title">Калькулятор</div>
+        </div>
+        <div class="shortcut" id="sh-win-notepad" onclick="openWindow('win-notepad')">
+            <div class="icon">📝</div>
+            <div class="title">Блокнот</div>
+        </div>
+        <div class="shortcut" id="sh-win-installer" onclick="openWindow('win-installer')">
+            <div class="icon">📦</div>
+            <div class="title">Установка ПО</div>
+        </div>
+        <div class="shortcut" id="sh-win-settings" onclick="openWindow('win-settings')">
+            <div class="icon">⚙️</div>
+            <div class="title">Параметры</div>
+        </div>
+    </div>
+
+    <div id="start-menu">
+        <div class="start-item" id="start-win-explorer" onclick="openWindow('win-explorer'); toggleStart();">📁 Проводник</div>
+        <div class="start-item" id="start-win-paint" onclick="openWindow('win-paint'); toggleStart();">🎨 Графический Paint</div>
+        <div class="start-item" id="start-win-console" onclick="openWindow('win-console'); toggleStart();">💻 Консоль</div>
+        <div class="start-item" id="start-win-calc" onclick="openWindow('win-calc'); toggleStart();">🧮 Калькулятор</div>
+        <div class="start-item" id="start-win-installer" onclick="openWindow('win-installer'); toggleStart();">📦 Установщик программ</div>
+        <div class="start-item" id="start-win-settings" onclick="openWindow('win-settings'); toggleStart();">⚙️ Настройки системы</div>
+        <hr id="start-separator" style="border:none; border-top:1px solid var(--border-glass); margin:5px 0;">
+        <div class="start-item" onclick="triggerResetReboot()" style="color:#ffae19; font-weight:bold;">🔄 Перезагрузка (Сброс)</div>
+        <div class="start-item" onclick="triggerShutdown()" style="color:#ff5f56; font-weight:bold;">🛑 Завершение работы</div>
+    </div>
+
+    <div id="taskbar">
+        <button id="start-btn" onclick="toggleStart()">❖ Пуск</button>
+        <div id="taskbar-apps" style="display:flex; gap:8px;"></div>
+        <div id="system-tray" style="font-size: 13px; font-weight:600;">00:00</div>
+    </div>
+
+    <div id="win-explorer" class="window">
+        <div class="window-header">
+            <div class="window-title">Проводник</div>
+            <div class="window-controls">
+                <button class="win-btn" onclick="minimizeWindow('win-explorer')">—</button>
+                <button class="win-btn" onclick="maximizeWindow('win-explorer')">🗖</button>
+                <button class="win-btn btn-close" onclick="closeWindow('win-explorer')">✕</button>
+            </div>
+        </div>
+        <div class="window-content" id="explorer-content-zone">
+            <div class="explorer-layout">
+                <div class="sidebar">
+                    <div class="sidebar-item" onclick="changeFolder('root')">💻 Системный диск (C:)</div>
+                    <div class="sidebar-item" onclick="changeFolder('docs')">📂 Документы</div>
+                </div>
+                <div class="file-grid" id="explorer-files"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="win-paint" class="window" style="width: 720px; height: 510px;">
+        <div class="window-header">
+            <div class="window-title">Paint Creative Studio</div>
+            <div class="window-controls">
+                <button class="win-btn" onclick="minimizeWindow('win-paint')">—</button>
+                <button class="win-btn" onclick="maximizeWindow('win-paint')">🗖</button>
+                <button class="win-btn btn-close" onclick="closeWindow('win-paint')">✕</button>
+            </div>
+        </div>
+        <div class="window-content" style="padding: 8px; overflow:hidden;">
+            <div class="paint-layout">
+                <div class="paint-toolbar">
+                    <input type="color" id="paintColor" value="#00f0ff" style="cursor:pointer;">
+                    <select id="paintBrush" style="background:#000; color:#fff; border:1px solid var(--border-glass); padding:4px; border-radius:4px;">
+                        <option value="normal">🎨 Обычная кисть</option>
+                        <option value="neon">✨ Неоновое свечение</option>
+                        <option value="blur">💧 Размытый штрих</option>
+                    </select>
+                    <label style="font-size:11px;">Размер:</label>
+                    <input type="range" id="paintSize" min="2" max="40" value="8" style="width:80px;">
+                    <button class="action-btn" onclick="clearPaintCanvas()" style="padding:3px 8px; font-size:11px; margin-left:auto;">Очистить</button>
+                </div>
+                <div class="paint-canvas-container" id="paint-container">
+                    <canvas id="paintCanvas" width="620" height="390"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="win-console" class="window" style="width: 500px; height: 350px;">
+        <div class="window-header">
+            <div class="window-title">Системная Консоль v67</div>
+            <div class="window-controls">
+                <button class="win-btn" onclick="minimizeWindow('win-console')">—</button>
+                <button class="win-btn" onclick="maximizeWindow('win-console')">🗖</button>
+                <button class="win-btn btn-close" onclick="closeWindow('win-console')">✕</button>
+            </div>
+        </div>
+        <div class="window-content" style="padding:0;">
+            <div class="console-log" id="console-output">
+                <div>Windows 67 [Build 7.6 Engine Active]</div>
+                <div>Введите 'help' для просмотра команд.</div>
+                <br>
+            </div>
+            <div class="console-input-row">
+                <span class="console-prefix">WIN67:\></span>
+                <input type="text" class="console-input" id="console-cmd" onkeydown="if(event.key==='Enter') executeCommand()">
+            </div>
+        </div>
+    </div>
+
+    <div id="win-calc" class="window" style="width: 320px; height: 420px;">
+        <div class="window-header">
+            <div class="window-title">Калькулятор</div>
+            <div class="window-controls">
+                <button class="win-btn" onclick="minimizeWindow('win-calc')">—</button>
+                <button class="win-btn" onclick="maximizeWindow('win-calc')">🗖</button>
+                <button class="win-btn btn-close" onclick="closeWindow('win-calc')">✕</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <input type="text" class="calc-screen" id="calc-display" readonly value="0">
+            <div class="calc-buttons">
+                <button class="calc-btn" onclick="clearCalc()">C</button>
+                <button class="calc-btn" onclick="pressCalc('/')">/</button>
+                <button class="calc-btn" onclick="pressCalc('*')">*</button>
+                <button class="calc-btn" onclick="pressCalc('-')">-</button>
+                <button class="calc-btn" onclick="pressCalc('7')">7</button>
+                <button class="calc-btn" onclick="pressCalc('8')">8</button>
+                <button class="calc-btn" onclick="pressCalc('9')">9</button>
+                <button class="calc-btn" onclick="pressCalc('+')">+</button>
+                <button class="calc-btn" onclick="pressCalc('4')">4</button>
+                <button class="calc-btn" onclick="pressCalc('5')">5</button>
+                <button class="calc-btn" onclick="pressCalc('6')">6</button>
+                <button class="calc-btn" onclick="calculateResult('=')">=</button>
+                <button class="calc-btn" onclick="pressCalc('1')">1</button>
+                <button class="calc-btn" onclick="pressCalc('2')">2</button>
+                <button class="calc-btn" onclick="pressCalc('3')">3</button>
+                <button class="calc-btn" onclick="pressCalc('0')">0</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="win-notepad" class="window">
+        <div class="window-header">
+            <div class="window-title">Блокнот</div>
+            <div class="window-controls">
+                <button class="win-btn" onclick="minimizeWindow('win-notepad')">—</button>
+                <button class="win-btn" onclick="maximizeWindow('win-notepad')">🗖</button>
+                <button class="win-btn btn-close" onclick="closeWindow('win-notepad')">✕</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <textarea style="height: calc(100% - 45px);" id="notepad-text"></textarea>
+            <button class="action-btn" onclick="saveFile()" style="margin-top:8px; width:100%;">Сохранить файл в Документы</button>
+        </div>
+    </div>
+
+    <div id="win-installer" class="window" style="width: 480px; height: 420px;">
+        <div class="window-header">
+            <div class="window-title">Установка программного обеспечения</div>
+            <div class="window-controls">
+                <button class="win-btn" onclick="minimizeWindow('win-installer')">—</button>
+                <button class="win-btn" onclick="maximizeWindow('win-installer')">🗖</button>
+                <button class="win-btn btn-close" onclick="closeWindow('win-installer')">✕</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <h3 style="margin-bottom:12px; font-size:14px; border-bottom:1px solid var(--border-glass); padding-bottom:5px; color:var(--primary-color);">🌐 Установка кастомного HTML-приложения</h3>
+            <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px;">
+                <div class="control-group">
+                    <label>Имя программы</label>
+                    <input type="text" id="customAppName" placeholder="Например: Моя Игра 2D">
+                </div>
+                <div class="control-group">
+                    <label>Иконка программы (Эмодзи)</label>
+                    <input type="text" id="customAppIcon" value="🚀" style="text-align: center; font-size: 16px;">
+                </div>
+                <div class="control-group">
+                    <label>Файл приложения (.html)</label>
+                    <div class="file-wrapper">
+                        <button class="action-btn" style="width:100%; padding: 8px;">📁 Выбрать HTML-файл</button>
+                        <input type="file" id="customAppFile" accept=".html" onchange="loadCustomHtmlApp(this)">
+                    </div>
+                    <div id="customFileStatus" style="font-size:12px; color:var(--primary-color); margin-top:5px; display:none;">Файл успешно считан!</div>
+                </div>
+                <button class="action-btn" onclick="installCustomHtmlApp()" style="width:100%; margin-top: 5px; background: var(--primary-color); color: #000; font-weight: bold;">📥 Установить на Рабочий Стол</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="win-settings" class="window" style="width: 500px; height: 580px;">
+        <div class="window-header">
+            <div class="window-title">Параметры системы</div>
+            <div class="window-controls">
+                <button class="win-btn" onclick="minimizeWindow('win-settings')">—</button>
+                <button class="win-btn" onclick="maximizeWindow('win-settings')">🗖</button>
+                <button class="win-btn btn-close" onclick="closeWindow('win-settings')">✕</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <h3 style="margin-bottom:12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:5px;">Цветовая Тема Системы</h3>
+            <div class="custom-row">
+                <label>Главный цвет интерфейса:</label>
+                <input type="color" id="sys-primary-color" value="#00f0ff" onchange="updateSystemTheme()" style="cursor:pointer; border:none; background:transparent; width:45px; height:30px;">
+            </div>
+
+            <div class="custom-row" style="flex-direction: column; align-items: stretch; gap: 8px;">
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <label>Прозрачность окон и панелей:</label>
+                    <span id="opacity-tx" style="color:var(--primary-color); font-weight:bold;">75%</span>
+                </div>
+                <input type="range" min="10" max="100" value="75" id="opacity-sl" style="width:100%;" oninput="updateOpacityValue()">
+            </div>
+
+            <h3 style="margin:15px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:5px;">Установка Фона (Обоев)</h3>
+            <div class="custom-row" style="flex-direction:column; align-items:stretch; gap:10px;">
+                <button class="action-btn" onclick="document.getElementById('wallpaper-upload').click()" style="width:100%; padding:8px; font-weight:bold; background: rgba(0,240,255,0.15);">📁 Загрузить обои с ПК</button>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="bg-url-input" placeholder="Вставить URL-ссылку на картинку..." style="flex-grow:1; background:#000; color:#fff; border:1px solid var(--border-glass); padding:6px; border-radius:4px; outline:none; font-size:12px;">
+                    <button class="action-btn" onclick="applyCustomWallpaper()">ОК</button>
+                </div>
+            </div>
+
+            <h3 style="margin:15px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:5px;">Выбор Живого Эффекта</h3>
+            <div class="custom-row">
+                <label>Активный эффект:</label>
+                <select id="fx-select" class="sys-select" onchange="changeFxEffect()">
+                    <option value="matrix">Matrix (Точки) 🤖</option>
+                    <option value="snow">Снегопад ❄️</option>
+                    <option value="digital_rain">Цифровой дождь 💾</option>
+                    <option value="none">Без эффектов (Чистый фон) 🌌</option>
+                </select>
+            </div>
+
+            <div class="custom-row" style="flex-direction: column; align-items: stretch; gap: 8px;" id="speed-row">
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <label>Скорость анимации фона:</label>
+                    <span id="speed-tx" style="color:var(--primary-color); font-weight:bold;">x1</span>
+                </div>
+                <input type="range" min="0" max="10" step="0.5" value="1" id="speed-sl" style="width:100%;" oninput="updateSpeedValue()">
+            </div>
+
+            <div class="custom-row" style="flex-direction: column; align-items: stretch; gap: 8px;" id="size-row">
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <label>Размер частиц:</label>
+                    <span id="size-tx" style="color:var(--primary-color); font-weight:bold;">2px</span>
+                </div>
+                <input type="range" min="1" max="25" step="1" value="2" id="size-sl" style="width:100%;" oninput="updateParticleSize()">
+            </div>
+
+            <h3 style="margin:15px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:5px;">Настройки Интерфейса</h3>
+            <div class="custom-row"><label>Скругление окон:</label><input type="range" min="0" max="30" value="12" id="round-sl" oninput="updateStyles()"><span id="round-tx">12px</span></div>
+        </div>
+    </div>
+
+    <script>
+        // --- ДВИЖОК ЖИВЫХ ЧАСТИЦ ---
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let particles = [];
+        let globalSpeedMultiplier = 1; 
+        let globalParticleSize = 2;
+        let currentFx = 'matrix';
+
+        const symbols = "0123456789$#@!ABCDEF%&*?";
+
+        function resizeBgCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            initFxParticles();
+        }
+        window.addEventListener('resize', resizeBgCanvas);
+
+        function initFxParticles() {
+            particles = [];
+            if (currentFx === 'none') return;
+
+            const count = currentFx === 'digital_rain' ? Math.floor(window.innerWidth / 15) : 60;
+
+            for(let i = 0; i < count; i++) {
+                if (currentFx === 'matrix') {
+                    particles.push({
+                        x: Math.random() * bgCanvas.width,
+                        y: Math.random() * bgCanvas.height,
+                        speedY: Math.random() * 1.5 + 0.5,
+                        alpha: Math.random() * 0.5 + 0.2
+                    });
+                } else if (currentFx === 'snow') {
+                    particles.push({
+                        x: Math.random() * bgCanvas.width,
+                        y: Math.random() * bgCanvas.height,
+                        speedY: Math.random() * 1.0 + 0.4,
+                        swing: Math.random() * 0.03,
+                        swingRange: Math.random() * 2 + 1,
+                        angle: Math.random() * 100
+                    });
+                } else if (currentFx === 'digital_rain') {
+                    particles.push({
+                        x: i * 20 + Math.random() * 5,
+                        y: Math.random() * bgCanvas.height - bgCanvas.height,
+                        speedY: Math.random() * 3 + 2,
+                        chars: Array.from({length: Math.floor(Math.random() * 15) + 5}, () => symbols[Math.floor(Math.random() * symbols.length)])
+                    });
+                }
+            }
+        }
+
+        function animateParticles() {
+            if (currentFx === 'none' || document.body.style.backgroundImage) {
+                bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            } else {
+                bgCtx.fillStyle = 'rgba(5, 5, 16, 0.2)';
+                bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+            }
+
+            if (currentFx !== 'none') {
+                const pColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+
+                particles.forEach(p => {
+                    bgCtx.save();
+
+                    if (currentFx === 'matrix') {
+                        bgCtx.beginPath();
+                        bgCtx.arc(p.x, p.y, globalParticleSize, 0, Math.PI * 2);
+                        bgCtx.fillStyle = pColor;
+                        bgCtx.globalAlpha = p.alpha;
+                        bgCtx.fill();
+
+                        p.y += p.speedY * globalSpeedMultiplier;
+                        if (p.y > bgCanvas.height) { p.y = -10; p.x = Math.random() * bgCanvas.width; }
+
+                    } else if (currentFx === 'snow') {
+                        bgCtx.beginPath();
+                        bgCtx.arc(p.x, p.y, globalParticleSize, 0, Math.PI * 2);
+                        bgCtx.fillStyle = '#ffffff'; 
+                        bgCtx.globalAlpha = 0.85;
+                        bgCtx.fill();
+
+                        p.y += p.speedY * globalSpeedMultiplier;
+                        p.angle += p.swing * globalSpeedMultiplier;
+                        p.x += Math.sin(p.angle) * p.swingRange * (globalSpeedMultiplier > 0 ? 1 : 0);
+
+                        if (p.y > bgCanvas.height) { p.y = -10; p.x = Math.random() * bgCanvas.width; }
+                        if (p.x > bgCanvas.width) p.x = 0; else if (p.x < 0) p.x = bgCanvas.width;
+
+                    } else if (currentFx === 'digital_rain') {
+                        bgCtx.fillStyle = pColor;
+                        bgCtx.font = `${globalParticleSize * 4}px monospace`;
+
+                        p.chars.forEach((char, index) => {
+                            bgCtx.globalAlpha = (index === 0) ? 1.0 : 1 / (index + 1);
+                            const charY = p.y - (index * globalParticleSize * 4);
+                            if (charY > 0 && charY < bgCanvas.height) { bgCtx.fillText(char, p.x, charY); }
+
+                            if (Math.random() * 100 > 98 && globalSpeedMultiplier > 0) {
+                                p.chars[index] = symbols[Math.floor(Math.random() * symbols.length)];
+                            }
+                        });
+
+                        p.y += p.speedY * globalSpeedMultiplier;
+                        if (p.y - (p.chars.length * globalParticleSize * 4) > bgCanvas.height) {
+                            p.y = -20; p.x = Math.random() * bgCanvas.width;
+                        }
+                    }
+                    bgCtx.restore();
+                });
+            }
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        resizeBgCanvas();
+        animateParticles();
+
+        function updateOpacityValue() {
+            const val = document.getElementById('opacity-sl').value;
+            document.getElementById('opacity-tx').innerText = val + '%';
+            const alpha = val / 100;
+            document.documentElement.style.setProperty('--glass-opacity', alpha);
+            saveSystemState();
+        }
+
+        function updateSystemTheme() {
+            const hexColor = document.getElementById('sys-primary-color').value;
+            document.documentElement.style.setProperty('--primary-color', hexColor);
+            
+            let r = parseInt(hexColor.slice(1, 3), 16);
+            let g = parseInt(hexColor.slice(3, 5), 16);
+            let b = parseInt(hexColor.slice(5, 7), 16);
+            document.documentElement.style.setProperty('--border-glass', `rgba(${r}, ${g}, ${b}, 0.25)`);
+            
+            if(document.getElementById('paintColor')) document.getElementById('paintColor').value = hexColor;
+            document.getElementById('speed-tx').style.color = hexColor;
+            document.getElementById('size-tx').style.color = hexColor;
+            document.getElementById('opacity-tx').style.color = hexColor;
+            saveSystemState();
+        }
+
+        function changeFxEffect() {
+            currentFx = document.getElementById('fx-select').value;
+            if(currentFx === 'none') {
+                document.getElementById('speed-row').style.display = 'none';
+                document.getElementById('size-row').style.display = 'none';
+            } else {
+                document.getElementById('speed-row').style.display = 'flex';
+                document.getElementById('size-row').style.display = 'flex';
+            }
+            initFxParticles();
+            saveSystemState();
+        }
+
+        function updateSpeedValue() {
+            const val = parseFloat(document.getElementById('speed-sl').value);
+            globalSpeedMultiplier = val;
+            const txt = document.getElementById('speed-tx');
+            if (val === 0) txt.innerText = "0 (СТОП)";
+            else if (val === 1) txt.innerText = "x1";
+            else if (val === 10) txt.innerText = "x10 ⚡";
+            else txt.innerText = "x" + val;
+            saveSystemState();
+        }
+
+        function updateParticleSize() {
+            const val = parseInt(document.getElementById('size-sl').value);
+            globalParticleSize = val;
+            document.getElementById('size-tx').innerText = val + "px";
+            saveSystemState();
+        }
+
+        function loadWallpaperFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.body.style.backgroundImage = `url('${e.target.result}')`;
+                    saveSystemState();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function applyCustomWallpaper() {
+            const url = document.getElementById('bg-url-input').value.trim();
+            if(url) {
+                document.body.style.backgroundImage = `url('${url}')`;
+                saveSystemState();
+            }
+        }
+
+        // --- Часы ---
+        function clock() { document.getElementById('system-tray').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
+        setInterval(clock, 1000); clock();
+
+        // СБРОС И ПЕРЕЗАГРУЗКА
+        function triggerResetReboot() {
+            document.getElementById('reboot-text').innerText = "Сброс данных и перезагрузка Windows 67...";
+            document.getElementById('reboot-screen').style.display = 'flex';
+            localStorage.clear(); 
+            setTimeout(() => { location.reload(); }, 1500);
+        }
+
+        // ЗАВЕРШЕНИЕ РАБОТЫ (ЗАКРЫТИЕ ВКЛАДКИ)
+        function triggerShutdown() {
+            document.getElementById('reboot-text').innerText = "Завершение работы системы...";
+            document.getElementById('reboot-screen').style.display = 'flex';
+            setTimeout(() => { 
+                window.close();
+                // Фолбэк на случай блокировки браузером прямой команды close
+                alert("Система отключена. Теперь вы можете закрыть эту вкладку самостоятельно.");
+            }, 1200);
+        }
+
+        // --- Буфер Обмена и Файлы ---
+        let fileClipboard = null;
+        let isCutOperation = false;
+        let currentRightClickedFile = null;
+        let currentFolder = 'root';
+        let contextTargetArea = 'desktop';
+        let isCustomAppRightClicked = false;
+
+        let filesData = {
+            root: [
+                {name: 'Ядро_Системы.sys', content: 'Конфигурация Build 7.6 Active.', icon: '⚙️'}, 
+                {name: 'Инструкция.txt', content: 'Вырежи или скопируй меня через ПКМ и вставь на рабочий стол!', icon: '📄'}
+            ],
+            docs: []
+        };
+        let desktopFiles = [];
+        let installedAppsList = [];
+
+        window.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            const desktopMenu = document.getElementById('desktop-menu');
+            const fileMenu = document.getElementById('file-menu');
+            const pasteItem = document.getElementById('menu-paste-item');
+            const deleteItem = document.getElementById('menu-delete-item');
+            
+            desktopMenu.style.display = 'none';
+            fileMenu.style.display = 'none';
+            isCustomAppRightClicked = false;
+
+            if (fileClipboard) pasteItem.classList.remove('disabled');
+            else pasteItem.classList.add('disabled');
+
+            const fileItem = e.target.closest('.file-item') || e.target.closest('.shortcut[data-file="true"]');
+            const customAppItem = e.target.closest('.shortcut[data-custom-app="true"]');
+            
+            if (customAppItem) {
+                currentRightClickedFile = customAppItem.id.replace('sh-', '');
+                isCustomAppRightClicked = true;
+                deleteItem.innerText = "🗑️ Удалить приложение";
+                fileMenu.style.display = 'flex';
+                fileMenu.style.left = e.clientX + 'px';
+                fileMenu.style.top = e.clientY + 'px';
+            } else if (fileItem) {
+                currentRightClickedFile = fileItem.getAttribute('data-name');
+                contextTargetArea = fileItem.hasAttribute('data-desktop') ? 'desktop' : 'explorer';
+                deleteItem.innerText = "🗑️ Удалить";
+                fileMenu.style.display = 'flex';
+                fileMenu.style.left = e.clientX + 'px';
+                fileMenu.style.top = e.clientY + 'px';
+            } else {
+                if (e.target.closest('#win-explorer') || e.target.closest('#explorer-content-zone')) contextTargetArea = 'explorer';
+                else contextTargetArea = 'desktop';
+                desktopMenu.style.display = 'flex';
+                desktopMenu.style.left = e.clientX + 'px';
+                desktopMenu.style.top = e.clientY + 'px';
+            }
+        });
+
+        window.addEventListener('click', function() {
+            document.getElementById('desktop-menu').style.display = 'none';
+            document.getElementById('file-menu').style.display = 'none';
+        });
+
+        function contextOpenFile() {
+            if(isCustomAppRightClicked) { openWindow(currentRightClickedFile); return; }
+            if(!currentRightClickedFile) return;
+            let file = (contextTargetArea === 'desktop') ? desktopFiles.find(f => f.name === currentRightClickedFile) : filesData[currentFolder].find(f => f.name === currentRightClickedFile);
+            if(file) { document.getElementById('notepad-text').value = file.content; openWindow('win-notepad'); }
+        }
+
+        function contextCopyFile() {
+            if(isCustomAppRightClicked) return;
+            if(!currentRightClickedFile) return;
+            let file = (contextTargetArea === 'desktop') ? desktopFiles.find(f => f.name === currentRightClickedFile) : filesData[currentFolder].find(f => f.name === currentRightClickedFile);
+            if(file) { fileClipboard = { ...file }; isCutOperation = false; }
+        }
+
+        function contextCutFile() {
+            if(isCustomAppRightClicked) return;
+            if(!currentRightClickedFile) return;
+            let idx;
+            if (contextTargetArea === 'desktop') {
+                idx = desktopFiles.findIndex(f => f.name === currentRightClickedFile);
+                if (idx > -1) { fileClipboard = desktopFiles.splice(idx, 1)[0]; isCutOperation = true; renderDesktopFiles(); saveSystemState(); }
+            } else {
+                idx = filesData[currentFolder].findIndex(f => f.name === currentRightClickedFile);
+                if(idx > -1) { fileClipboard = filesData[currentFolder].splice(idx, 1)[0]; isCutOperation = true; renderFiles(currentFolder); saveSystemState(); }
+            }
+        }
+
+        function contextPasteFile() {
+            if (!fileClipboard) return;
+            let targetList = (contextTargetArea === 'desktop') ? desktopFiles : filesData[currentFolder];
+            let newName = fileClipboard.name;
+            let counter = 1;
+            while(targetList.some(f => f.name === newName)) {
+                let parts = fileClipboard.name.split('.');
+                if(parts.length > 1) {
+                    let ext = parts.pop(); newName = `${parts.join('.')}_копия${counter}.${ext}`;
+                } else { newName = `${fileClipboard.name}_копия${counter}`; }
+                counter++;
+            }
+
+            let fileToPaste = { ...fileClipboard, name: newName };
+            targetList.push(fileToPaste);
+            if (isCutOperation) fileClipboard = null;
+
+            renderFiles(currentFolder);
+            renderDesktopFiles();
+            saveSystemState();
+        }
+
+        function contextDeleteFile() {
+            if (isCustomAppRightClicked) {
+                uninstallCustomApp(currentRightClickedFile);
+                return;
+            }
+            if(!currentRightClickedFile) return;
+            if (contextTargetArea === 'desktop') { desktopFiles = desktopFiles.filter(f => f.name !== currentRightClickedFile); renderDesktopFiles(); }
+            else { filesData[currentFolder] = filesData[currentFolder].filter(f => f.name !== currentRightClickedFile); renderFiles(currentFolder); }
+            saveSystemState();
+        }
+
+        function renderDesktopFiles() {
+            document.querySelectorAll('.shortcut[data-file="true"]').forEach(el => el.remove());
+            const desktop = document.getElementById('desktop');
+            desktopFiles.forEach(f => {
+                const item = document.createElement('div'); item.className = 'shortcut';
+                item.setAttribute('data-file', 'true'); item.setAttribute('data-name', f.name); item.setAttribute('data-desktop', 'true');
+                item.innerHTML = `<div class="icon">${f.icon}</div><div class="title">${f.name}</div>`;
+                item.onclick = () => { document.getElementById('notepad-text').value = f.content; openWindow('win-notepad'); };
+                desktop.appendChild(item);
+            });
+        }
+
+        function changeFolder(folder) { currentFolder = folder; renderFiles(folder); }
+        function renderFiles(folder) {
+            const grid = document.getElementById('explorer-files'); if(!grid) return;
+            grid.innerHTML = '';
+            filesData[folder].forEach(f => {
+                const item = document.createElement('div'); item.className = 'file-item';
+                item.setAttribute('data-name', f.name);
+                item.innerHTML = `<div style="font-size:32px">${f.icon}</div><div style="font-size:11px; margin-top:4px; word-break:break-all;">${f.name}</div>`;
+                item.ondblclick = () => { document.getElementById('notepad-text').value = f.content; openWindow('win-notepad'); };
+                grid.appendChild(item);
+            });
+        }
+
+        function saveFile() {
+            const text = document.getElementById('notepad-text').value;
+            filesData.docs.push({name: `Заметка_${filesData.docs.length + 1}.txt`, content: text, icon: '📄'});
+            renderFiles(currentFolder);
+            saveSystemState();
+            alert('Сохранено в папку Документы!');
+        }
+
+        // --- Управление Окнами ---
+        let topZ = 100; const openWindows = new Set();
+        function toggleStart() { document.getElementById('start-menu').classList.toggle('active'); }
+        function openWindow(id) {
+            const win = document.getElementById(id); win.classList.add('active'); win.classList.remove('minimized');
+            topZ++; win.style.zIndex = topZ;
+            if(!win.style.top && !win.classList.contains('maximized')) { win.style.top = '12%'; win.style.left = '22%'; }
+            openWindows.add(id); updateTaskbar();
+            if(id === 'win-paint') setTimeout(initPaint, 80);
+        }
+        function closeWindow(id) { document.getElementById(id).classList.remove('active'); openWindows.delete(id); updateTaskbar(); }
+        function minimizeWindow(id) { document.getElementById(id).classList.add('minimized'); }
+        function maximizeWindow(id) { document.getElementById(id).classList.toggle('maximized'); if(id==='win-paint') setTimeout(initPaint, 150); }
+
+        function updateTaskbar() {
+            const bar = document.getElementById('taskbar-apps'); bar.innerHTML = '';
+            openWindows.forEach(id => {
+                const winEl = document.getElementById(id);
+                if (!winEl) return;
+                const btn = document.createElement('button'); btn.className = 'action-btn';
+                btn.innerText = winEl.querySelector('.window-title').innerText;
+                btn.onclick = () => {
+                    const win = document.getElementById(id);
+                    if(win.classList.contains('minimized')) { win.classList.remove('minimized'); topZ++; win.style.zIndex = topZ; }
+                    else { win.classList.add('minimized'); }
+                };
+                bar.appendChild(btn);
+            });
+        }
+
+        // --- ВСТРОЕННЫЙ PAINT ---
+        const paintCanvas = document.getElementById('paintCanvas');
+        const paintCtx = paintCanvas.getContext('2d');
+        let paintPainting = false;
+
+        function initPaint() {
+            const container = document.getElementById('paint-container');
+            if(paintCanvas.width !== container.clientWidth - 20) {
+                paintCanvas.width = container.clientWidth - 20;
+                paintCanvas.height = container.clientHeight - 20;
+                clearPaintCanvas();
+            }
+        }
+
+        paintCanvas.addEventListener('mousedown', (e) => { paintPainting = true; paintCtx.beginPath(); drawPaint(e); });
+        paintCanvas.addEventListener('mousemove', drawPaint);
+        window.addEventListener('mouseup', () => { if(paintPainting) { paintPainting = false; paintCtx.beginPath(); } });
+
+        function drawPaint(e) {
+            if (!paintPainting) return;
+            const rect = paintCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const color = document.getElementById('paintColor').value;
+            const size = document.getElementById('paintSize').value;
+            const mode = document.getElementById('paintBrush').value;
+
+            paintCtx.save();
+            paintCtx.lineWidth = size; paintCtx.lineCap = 'round'; paintCtx.lineJoin = 'round'; paintCtx.strokeStyle = color;
+
+            if (mode === 'neon') { paintCtx.shadowBlur = size; paintCtx.shadowColor = color; }
+            else if (mode === 'blur') { paintCtx.globalAlpha = 0.15; }
+            else { paintCtx.shadowBlur = 0; paintCtx.globalAlpha = 1.0; }
+
+            paintCtx.lineTo(x, y); paintCtx.stroke();
+            paintCtx.beginPath(); paintCtx.moveTo(x, y);
+            paintCtx.restore();
+        }
+
+        function clearPaintCanvas() {
+            paintCtx.fillStyle = '#1e1e1e'; paintCtx.fillRect(0, 0, paintCanvas.width, paintCanvas.height); paintCtx.beginPath();
+        }
+
+        // --- УСТАНОВКА HTML ПРИЛОЖЕНИЙ ---
+        let customAppCodeBuffer = "";
+
+        function loadCustomHtmlApp(input) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                customAppCodeBuffer = e.target.result;
+                const status = document.getElementById('customFileStatus');
+                status.innerText = `Файл "${input.files[0].name}" считан!`;
+                status.style.display = 'block';
+            };
+            reader.readAsText(input.files[0]);
+        }
+
+        function installCustomHtmlApp(restoringData = null) {
+            let appId, name, icon, code;
+
+            if (restoringData) {
+                appId = restoringData.id;
+                name = restoringData.name;
+                icon = restoringData.icon;
+                code = restoringData.code;
+            } else {
+                name = document.getElementById('customAppName').value.trim();
+                icon = document.getElementById('customAppIcon').value.trim() || '🚀';
+                if (!name) { alert('Введите имя приложения!'); return; }
+                if (!customAppCodeBuffer) { alert('Сначала выберите HTML-файл!'); return; }
+                appId = 'app-' + Date.now();
+                code = customAppCodeBuffer;
+            }
+
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+
+            const win = document.createElement('div');
+            win.className = 'window';
+            win.id = appId;
+            win.style.width = '750px';
+            win.style.height = '500px';
+            win.innerHTML = `
+                <div class="window-header">
+                    <div class="window-title">${icon} ${name}</div>
+                    <div class="window-controls">
+                        <button class="win-btn" onclick="minimizeWindow('${appId}')">—</button>
+                        <button class="win-btn" onclick="maximizeWindow('${appId}')">🗖</button>
+                        <button class="win-btn btn-close" onclick="closeWindow('${appId}')">✕</button>
+                    </div>
+                </div>
+                <div class="window-content" style="padding:0; overflow:hidden;">
+                    <iframe src="${url}" style="width:100%; height:100%; border:none; background:#fff;"></iframe>
+                </div>
+            `;
+            document.body.appendChild(win);
+            bindDragToHeader(win.querySelector('.window-header'));
+
+            const desktop = document.getElementById('desktop');
+            const sh = document.createElement('div');
+            sh.className = 'shortcut';
+            sh.id = 'sh-' + appId;
+            sh.setAttribute('data-custom-app', 'true');
+            sh.onclick = () => openWindow(appId);
+            sh.innerHTML = `<div class="icon">${icon}</div><div class="title">${name}</div>`;
+            desktop.appendChild(sh);
+
+            const startMenu = document.getElementById('start-menu');
+            const startSeparator = document.getElementById('start-separator');
+            const item = document.createElement('div');
+            item.className = 'start-item';
+            item.id = 'start-' + appId;
+            item.onclick = () => { openWindow(appId); toggleStart(); };
+            item.innerHTML = `<span>${icon}</span><span>${name}</span>`;
+            startMenu.insertBefore(item, startSeparator);
+
+            if (!restoringData) {
+                installedAppsList.push({ id: appId, name: name, icon: icon, code: code });
+                document.getElementById('customAppName').value = '';
+                document.getElementById('customAppIcon').value = '🚀';
+                document.getElementById('customFileStatus').style.display = 'none';
+                document.getElementById('customAppFile').value = '';
+                customAppCodeBuffer = "";
+                closeWindow('win-installer');
+                openWindow(appId);
+                saveSystemState();
+            }
+        }
+
+        function uninstallCustomApp(appId) {
+            if (!confirm("Вы действительно хотите удалить это приложение и все его ярлыки?")) return;
+
+            closeWindow(appId);
+
+            const winEl = document.getElementById(appId);
+            const shEl = document.getElementById('sh-' + appId);
+            const startEl = document.getElementById('start-' + appId);
+
+            if (winEl) winEl.remove();
+            if (shEl) shEl.remove();
+            if (startEl) startEl.remove();
+
+            installedAppsList = installedAppsList.filter(app => app.id !== appId);
+            updateTaskbar();
+            saveSystemState();
+        }
+
+        // --- Кастомизация скруглений ---
+        function updateStyles() {
+            const rnd = document.getElementById('round-sl').value;
+            document.documentElement.style.setProperty('--window-round', rnd + 'px');
+            document.getElementById('round-tx').innerText = rnd + 'px';
+            saveSystemState();
+        }
+
+        // --- Калькулятор ---
+        const calcDisp = document.getElementById('calc-display');
+        function pressCalc(v) { if(calcDisp.value === '0') calcDisp.value = ''; calcDisp.value += v; }
+        function clearCalc() { calcDisp.value = '0'; }
+        function calculateResult() { try { calcDisp.value = eval(calcDisp.value); } catch(e) { calcDisp.value = 'Ошибка'; } }
+
+        // --- Терминал ---
+        function executeCommand() {
+            const input = document.getElementById('console-cmd'); const log = document.getElementById('console-output');
+            const cmd = input.value.trim().toLowerCase(); if(!cmd) return;
+            log.innerHTML += `<div>WIN67:\\> ${input.value}</div>`;
+            if(cmd === 'help') log.innerHTML += `<div>Команды: help, hack, clear, reset</div>`;
+            else if(cmd === 'hack') log.innerHTML += `<div style="color:red;">[Взлом системного мейнфрейма...]</div>`;
+            else if(cmd === 'clear') log.innerHTML = '';
+            else if(cmd === 'reset') { triggerResetReboot(); }
+            else log.innerHTML += `<div>Неизвестная команда.</div>`;
+            input.value = ''; log.scrollTop = log.scrollHeight;
+        }
+
+        // --- Перетаскивание окон ---
+        function bindDragToHeader(h) {
+            h.addEventListener('mousedown', (e) => {
+                if(e.target.classList.contains('win-btn') || h.parentElement.classList.contains('maximized')) return;
+                const win = h.parentElement; topZ++; win.style.zIndex = topZ;
+                let sX = e.clientX - win.getBoundingClientRect().left, sY = e.clientY - win.getBoundingClientRect().top;
+                function move(ev) { win.style.left = ev.clientX - sX + 'px'; win.style.top = ev.clientY - sY + 'px'; }
+                document.addEventListener('mousemove', move);
+                document.onmouseup = () => { document.removeEventListener('mousemove', move); document.onmouseup = null; };
+            });
+        }
+
+        document.querySelectorAll('.window-header').forEach(h => bindDragToHeader(h));
+
+        document.addEventListener('click', function(e) {
+            const m = document.getElementById('start-menu');
+            if(!m.contains(e.target) && e.target !== document.getElementById('start-btn')) m.classList.remove('active');
+        });
+
+        // --- ДВИЖОК СОХРАНЕНИЙ (LOCALSTORAGE ENGINE) ---
+        function saveSystemState() {
+            const state = {
+                primaryColor: document.getElementById('sys-primary-color').value,
+                opacity: document.getElementById('opacity-sl').value,
+                fxEffect: document.getElementById('fx-select').value,
+                speed: document.getElementById('speed-sl').value,
+                particleSize: document.getElementById('size-sl').value,
+                round: document.getElementById('round-sl').value,
+                wallpaper: document.body.style.backgroundImage,
+                filesData: filesData,
+                desktopFiles: desktopFiles,
+                installedApps: installedAppsList
+            };
+            localStorage.setItem('win67_save_state', JSON.stringify(state));
+        }
+
+        function loadSystemState() {
+            const saved = localStorage.getItem('win67_save_state');
+            if (!saved) {
+                renderFiles('root');
+                return;
+            }
+            try {
+                const state = JSON.parse(saved);
+
+                // Загрузка темы
+                document.getElementById('sys-primary-color').value = state.primaryColor || '#00f0ff';
+                updateSystemTheme();
+
+                // Прозрачность
+                document.getElementById('opacity-sl').value = state.opacity || '75';
+                updateOpacityValue();
+
+                // Эффекты
+                document.getElementById('fx-select').value = state.fxEffect || 'matrix';
+                document.getElementById('speed-sl').value = state.speed || '1';
+                document.getElementById('size-sl').value = state.particleSize || '2';
+                currentFx = state.fxEffect || 'matrix';
+                globalSpeedMultiplier = parseFloat(state.speed || '1');
+                globalParticleSize = parseInt(state.particleSize || '2');
+                changeFxEffect();
+                updateSpeedValue();
+                updateParticleSize();
+
+                // Скругления
+                document.getElementById('round-sl').value = state.round || '12';
+                updateStyles();
+
+                // Обои
+                if (state.wallpaper) document.body.style.backgroundImage = state.wallpaper;
+
+                // Файлы
+                if (state.filesData) filesData = state.filesData;
+                if (state.desktopFiles) desktopFiles = state.desktopFiles;
+                renderFiles(currentFolder);
+                renderDesktopFiles();
+
+                // Восстановление установленных приложений
+                if (state.installedApps) {
+                    installedAppsList = state.installedApps;
+                    installedAppsList.forEach(app => installCustomHtmlApp(app));
+                }
+
+            } catch (e) {
+                console.error("Ошибка восстановления ОС: ", e);
+                renderFiles('root');
+            }
+        }
+
+        // Инициализация при старте
+        loadSystemState();
+    </script>
+</body>
+</html>
