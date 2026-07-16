@@ -3,42 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows 67 - Build 7.6 Custom</title>
+    <title>Windows 67 — Premium Candy Edition 🍬</title>
     <style>
         :root {
             --primary-color: #00f0ff;
             --secondary-color: #7000ff;
             --glass-opacity: 0.75;
-            --bg-glass: rgba(10, 15, 30, var(--glass-opacity));
+            --bg-glass: rgba(10, 15, 30, 0.75);
             --border-glass: rgba(0, 240, 255, 0.25);
             --text-color: #ffffff;
-            --window-round: 12px;
+            --window-round: 18px;
+            --bg-color: #050510;
+            --widget-bg: rgba(10, 15, 30, 0.5);
+            --shadow-color: rgba(0,0,0,0.7);
+            --glow-color: rgba(0, 240, 255, 0.3);
+            --accent-gradient: linear-gradient(135deg, #00f0ff, #7000ff, #ff00e6);
+            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --glass-border-light: rgba(255,255,255,0.08);
         }
+
+        [data-theme="light"] {
+            --bg-glass: rgba(240, 245, 255, 0.85);
+            --bg-color: #e8ecf1;
+            --text-color: #1a1a2e;
+            --border-glass: rgba(0, 0, 0, 0.12);
+            --widget-bg: rgba(255, 255, 255, 0.65);
+            --shadow-color: rgba(0,0,0,0.12);
+            --bg-canvas: #e8ecf1;
+            --glow-color: rgba(0, 100, 255, 0.2);
+            --glass-border-light: rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-glass: rgba(10, 15, 30, 0.75);
+            --bg-color: #050510;
+            --text-color: #ffffff;
+            --border-glass: rgba(0, 240, 255, 0.25);
+            --widget-bg: rgba(10, 15, 30, 0.5);
+            --shadow-color: rgba(0,0,0,0.7);
+            --bg-canvas: #050510;
+            --glow-color: rgba(0, 240, 255, 0.3);
+            --glass-border-light: rgba(255,255,255,0.05);
+        }
+
+        [data-theme="dark-blue"] {
+            --bg-glass: rgba(0, 10, 40, 0.8);
+            --bg-color: #0a0e2a;
+            --text-color: #aaccff;
+            --border-glass: rgba(60, 120, 255, 0.3);
+            --widget-bg: rgba(0, 10, 40, 0.5);
+            --shadow-color: rgba(0,0,30,0.7);
+            --bg-canvas: #0a0e2a;
+            --glow-color: rgba(60, 120, 255, 0.3);
+            --glass-border-light: rgba(60,120,255,0.05);
+        }
+
+        [data-theme="matrix"] {
+            --bg-glass: rgba(0, 10, 0, 0.85);
+            --bg-color: #000a00;
+            --text-color: #00ff41;
+            --border-glass: rgba(0, 255, 65, 0.3);
+            --widget-bg: rgba(0, 10, 0, 0.5);
+            --shadow-color: rgba(0,20,0,0.7);
+            --bg-canvas: #000a00;
+            --glow-color: rgba(0, 255, 65, 0.3);
+            --glass-border-light: rgba(0,255,65,0.05);
+        }
+
+        [data-theme="sunset"] {
+            --bg-glass: rgba(40, 10, 30, 0.8);
+            --bg-color: #1a0a1a;
+            --text-color: #ffccaa;
+            --border-glass: rgba(255, 150, 80, 0.3);
+            --widget-bg: rgba(40, 10, 30, 0.5);
+            --shadow-color: rgba(30,0,20,0.7);
+            --bg-canvas: #1a0a1a;
+            --glow-color: rgba(255, 150, 80, 0.3);
+            --glass-border-light: rgba(255,150,80,0.05);
+        }
+
+        [data-theme="ocean"] {
+            --bg-glass: rgba(0, 20, 40, 0.8);
+            --bg-color: #001a2a;
+            --text-color: #7fdbff;
+            --border-glass: rgba(0, 180, 255, 0.3);
+            --widget-bg: rgba(0, 20, 40, 0.5);
+            --shadow-color: rgba(0,0,30,0.7);
+            --bg-canvas: #001a2a;
+            --glow-color: rgba(0, 180, 255, 0.3);
+            --glass-border-light: rgba(0,180,255,0.05);
+        }
+
+        [data-theme="pink"] {
+            --bg-glass: rgba(40, 5, 30, 0.8);
+            --bg-color: #1a0a1a;
+            --text-color: #ffb6c1;
+            --border-glass: rgba(255, 100, 150, 0.3);
+            --widget-bg: rgba(40, 5, 30, 0.5);
+            --shadow-color: rgba(30,0,20,0.7);
+            --bg-canvas: #1a0a1a;
+            --glow-color: rgba(255, 100, 150, 0.3);
+            --glass-border-light: rgba(255,100,150,0.05);
+            --accent-gradient: linear-gradient(135deg, #ff6b9d, #ff1493, #ff00ff);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.92) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px var(--glow-color); }
+            50% { box-shadow: 0 0 40px var(--glow-color), 0 0 60px var(--glow-color); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 10px var(--glow-color); }
+            50% { text-shadow: 0 0 30px var(--glow-color), 0 0 60px var(--glow-color); }
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             user-select: none;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: var(--font-main);
         }
 
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #050510;
+            background: var(--bg-color);
             background-size: cover;
             background-position: center;
             color: var(--text-color);
-            transition: background 0.3s ease;
+            transition: background 0.6s ease, color 0.4s ease;
         }
 
-        #bg-canvas, #fx-canvas {
+        #bg-canvas {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1;
             pointer-events: none;
+            background: var(--bg-canvas);
+            transition: background 0.6s ease, opacity 0.5s ease;
+        }
+
+        .glass {
+            background: var(--bg-glass) !important;
+            backdrop-filter: blur(25px) saturate(1.2) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(1.2) !important;
+            border: 1px solid var(--border-glass) !important;
+            box-shadow: 0 8px 40px var(--shadow-color), inset 0 1px 0 var(--glass-border-light) !important;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease !important;
         }
 
         #desktop {
@@ -46,159 +171,792 @@
             top: 0; left: 0; width: 100%; height: calc(100vh - 50px);
             z-index: 2;
             padding: 25px;
-            display: flex;
+            display: none;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             align-content: flex-start;
             flex-wrap: wrap;
         }
+        #desktop.active {
+            display: flex;
+            animation: fadeIn 0.6s ease;
+        }
 
-        /* Иконки */
         .shortcut {
             width: 95px; height: 100px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; cursor: pointer; border-radius: 8px; transition: all 0.2s;
+            text-align: center; cursor: pointer; border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: 1px solid transparent;
             position: relative;
+            color: var(--text-color);
+            background: rgba(255,255,255,0.03);
+        }
+        .shortcut::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    padding: 2px;
+    background: var(--accent-gradient);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: 0.4s;
+}
+        .shortcut:hover::before {
+            opacity: 1;
+            animation: pulse 2s infinite;
         }
         .shortcut:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-5px) scale(1.08);
+            box-shadow: 0 0 40px var(--glow-color);
+        }
+        .shortcut .icon { 
+            font-size: 40px; 
+            margin-bottom: 5px; 
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .shortcut:hover .icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+        .shortcut .title { 
+            font-size: 12px; 
+            font-weight: 500; 
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9); 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            width: 100%;
+            padding: 0 4px;
+            transition: 0.3s;
+        }
+        .shortcut:hover .title {
+            color: var(--primary-color);
+        }
+
+        #widgets-container {
+            position: absolute;
+            bottom: 70px;
+            right: 20px;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+            max-width: 280px;
+        }
+        #widgets-container > * {
+            pointer-events: auto;
+            animation: slideUp 0.6s ease;
+        }
+
+        .widget {
+            background: var(--widget-bg);
+            backdrop-filter: blur(20px) saturate(1.2);
+            -webkit-backdrop-filter: blur(20px) saturate(1.2);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--window-round);
+            padding: 16px 20px;
+            min-width: 200px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: var(--text-color);
+            position: relative;
+            overflow: hidden;
+        }
+        .widget::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: rotate(45deg);
+            transition: 0.6s;
+        }
+        .widget:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 12px 48px var(--shadow-color), 0 0 40px var(--glow-color);
+        }
+        .widget:hover::before {
+            transform: rotate(45deg) translateX(100%);
+        }
+        .widget-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .weather-widget .temp {
+            font-size: 30px;
+            font-weight: 300;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glowPulse 3s infinite;
+        }
+        .weather-widget .temp span { font-size: 16px; opacity: 0.6; -webkit-text-fill-color: var(--text-color); }
+        .weather-widget .desc { font-size: 13px; opacity: 0.8; margin-top: 2px; }
+        .weather-widget .details { display: flex; gap: 15px; margin-top: 6px; font-size: 12px; opacity: 0.6; }
+
+        .clock-widget .time {
+            font-size: 34px;
+            font-weight: 200;
+            letter-spacing: 3px;
+            font-variant-numeric: tabular-nums;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glowPulse 2s infinite;
+        }
+        .clock-widget .date {
+            font-size: 13px;
+            opacity: 0.6;
+            margin-top: 2px;
+        }
+
+        .notes-widget textarea {
+            width: 100%;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            color: var(--text-color);
+            padding: 10px 14px;
+            font-size: 13px;
+            outline: none;
+            resize: vertical;
+            min-height: 60px;
+            max-height: 150px;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        .notes-widget textarea:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 15px var(--primary-color);
+            box-shadow: 0 0 30px var(--glow-color);
         }
-        .shortcut .icon { font-size: 40px; margin-bottom: 5px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
-        .shortcut .title { font-size: 12px; font-weight: 500; text-shadow: 0 2px 4px rgba(0,0,0,0.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .notes-widget .note-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .notes-widget .note-actions button {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border-glass);
+            color: var(--text-color);
+            padding: 5px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: 0.3s;
+        }
+        .notes-widget .note-actions button:hover {
+            background: var(--primary-color);
+            color: #000;
+            transform: scale(1.08);
+            box-shadow: 0 0 30px var(--glow-color);
+        }
 
-        /* Контекстные меню */
         .custom-context-menu {
-            position: absolute; background: rgba(10, 12, 22, 0.95); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass); border-radius: 8px; width: 180px;
-            display: none; flex-direction: column; padding: 6px 0; z-index: 100000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            position: fixed;
+            background: rgba(10, 12, 22, 0.92);
+            backdrop-filter: blur(30px) saturate(1.3);
+            -webkit-backdrop-filter: blur(30px) saturate(1.3);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--window-round);
+            min-width: 220px;
+            display: none;
+            flex-direction: column;
+            padding: 6px 0;
+            z-index: 100000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px var(--glow-color);
+            animation: fadeIn 0.15s ease;
         }
-        .menu-item { padding: 10px 15px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.1s; }
-        .menu-item:hover { background: var(--primary-color); color: #000; font-weight: 600; }
-        .menu-item.disabled { color: #555; cursor: not-allowed; }
-        .menu-item.disabled:hover { background: transparent; color: #555; font-weight: normal; }
+        .menu-item {
+            padding: 10px 18px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.15s;
+            color: var(--text-color);
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            border-radius: 6px;
+            margin: 1px 4px;
+        }
+        .menu-item:hover {
+            background: var(--primary-color);
+            color: #000;
+            font-weight: 600;
+            transform: scale(1.02);
+        }
+        .menu-item .icon { font-size: 16px; width: 22px; text-align: center; }
+        .menu-item.danger { color: #ff5f56; }
+        .menu-item.danger:hover { background: #ff5f56; color: #000; }
+        .menu-divider { border: none; border-top: 1px solid var(--border-glass); margin: 4px 12px; }
 
-        /* Таскбар */
         #taskbar {
-            width: 100%; height: 50px; background: var(--bg-glass); backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border-glass); position: absolute; bottom: 0; left: 0;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 15px; z-index: 9999;
-            transition: background 0.2s ease;
+            width: 100%; height: 52px;
+            background: var(--bg-glass) !important;
+            backdrop-filter: blur(25px) saturate(1.2) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(1.2) !important;
+            border-top: 1px solid var(--border-glass) !important;
+            position: absolute; bottom: 0; left: 0;
+            display: none;
+            align-items: center; justify-content: space-between; padding: 0 16px; z-index: 9999;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease;
+            box-shadow: 0 -4px 30px var(--shadow-color);
         }
-        #start-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none; color: white; padding: 8px 18px; border-radius: 4px;
-            font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 0 10px var(--primary-color);
+        #taskbar.active {
+            display: flex;
+            animation: fadeIn 0.4s ease;
         }
-        #start-btn:hover { filter: brightness(1.2); }
 
-        /* Пуск */
+        #start-btn {
+            background: var(--accent-gradient);
+            border: none; 
+            color: white; 
+            padding: 8px 22px; 
+            border-radius: 10px;
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 20px var(--glow-color);
+            position: relative;
+            overflow: hidden;
+            font-size: 14px;
+        }
+        #start-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: rotate(45deg) translateX(-100%);
+            transition: 0.6s;
+        }
+        #start-btn:hover::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+        #start-btn:hover {
+            transform: scale(1.08);
+            filter: brightness(1.2);
+            box-shadow: 0 0 50px var(--glow-color);
+        }
+
         #start-menu {
-            position: absolute; bottom: 60px; left: 15px; width: 320px;
-            background: var(--bg-glass); backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass); border-radius: var(--window-round);
-            padding: 15px; display: none; flex-direction: column; gap: 8px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.7); z-index: 10000;
-            transition: background 0.2s ease;
+            position: absolute; bottom: 62px; left: 15px; width: 360px;
+            background: var(--bg-glass) !important;
+            backdrop-filter: blur(30px) saturate(1.3) !important;
+            -webkit-backdrop-filter: blur(30px) saturate(1.3) !important;
+            border: 1px solid var(--border-glass) !important;
+            border-radius: var(--window-round);
+            padding: 20px; 
+            display: none; 
+            flex-direction: column; 
+            gap: 4px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px var(--glow-color);
+            z-index: 10000;
+            max-height: 70vh;
+            overflow-y: auto;
+            animation: slideUp 0.25s ease;
         }
         #start-menu.active { display: flex; }
-        .start-item { padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
-        .start-item:hover { background: rgba(255, 255, 255, 0.15); border-left: 3px solid var(--primary-color); }
+        .start-item { 
+            padding: 10px 16px; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            transition: 0.25s; 
+            color: var(--text-color);
+            font-size: 14px;
+        }
+        .start-item:hover { 
+            background: rgba(255, 255, 255, 0.08); 
+            border-left: 3px solid var(--primary-color);
+            transform: translateX(6px);
+        }
+        .start-item .icon { font-size: 20px; }
 
-        /* Окна */
         .window {
-            position: absolute; width: 560px; height: 420px; min-width: 320px; min-height: 240px;
-            background: var(--bg-glass); backdrop-filter: blur(25px); border: 1px solid var(--border-glass);
-            border-radius: var(--window-round); box-shadow: 0 20px 45px rgba(0,0,0,0.6);
-            display: none; flex-direction: column; overflow: hidden; z-index: 10; resize: both;
-            transition: background 0.2s ease;
+            position: absolute; 
+            width: 580px; 
+            height: 440px; 
+            min-width: 340px; 
+            min-height: 260px;
+            background: var(--bg-glass) !important;
+            backdrop-filter: blur(30px) saturate(1.3) !important;
+            -webkit-backdrop-filter: blur(30px) saturate(1.3) !important;
+            border: 1px solid var(--border-glass) !important;
+            border-radius: var(--window-round);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 40px var(--glow-color), inset 0 1px 0 var(--glass-border-light) !important;
+            display: none; 
+            flex-direction: column; 
+            overflow: hidden; 
+            z-index: 10; 
+            resize: both;
+            transition: border-radius 0.4s ease, background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+            animation: fadeIn 0.3s ease;
         }
         .window.active { display: flex; }
         .window.minimized { display: none !important; }
-        .window.maximized { width: 100% !important; height: calc(100vh - 50px) !important; top: 0 !important; left: 0 !important; resize: none !important; }
+        .window.maximized { width: 100% !important; height: calc(100vh - 52px) !important; top: 0 !important; left: 0 !important; resize: none !important; border-radius: 0 !important; }
 
-        .window-header { background: rgba(0, 0, 0, 0.4); display: flex; justify-content: space-between; align-items: center; cursor: move; height: 38px; border-bottom: 1px solid var(--border-glass); flex-shrink: 0; }
-        .window-title { padding-left: 14px; font-size: 13px; font-weight: 500; }
-        .window-controls { display: flex; height: 100%; }
-        .win-btn { width: 45px; height: 100%; border: none; background: transparent; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.1s; }
-        .win-btn:hover { background: rgba(255, 255, 255, 0.1); }
-        .btn-close:hover { background: #e81123 !important; }
-        .window-content { padding: 15px; flex-grow: 1; overflow: auto; height: calc(100% - 38px); position: relative; }
+        .window-header { 
+            background: rgba(0, 0, 0, 0.25); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            cursor: move; 
+            height: 42px; 
+            border-bottom: 1px solid var(--border-glass); 
+            flex-shrink: 0;
+            border-radius: var(--window-round) var(--window-round) 0 0;
+            transition: border-radius 0.4s ease;
+        }
+        .window-title { 
+            padding-left: 18px; 
+            font-size: 13px; 
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .window-controls { display: flex; height: 100%; gap: 2px; padding-right: 4px; }
+        .win-btn { 
+            width: 44px; 
+            height: 100%; 
+            border: none; 
+            background: transparent; 
+            color: var(--text-color); 
+            font-size: 14px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: 0.2s;
+            border-radius: 6px;
+            margin: 4px 0;
+        }
+        .win-btn:hover { background: rgba(255, 255, 255, 0.08); }
+        .btn-close:hover { background: #e81123 !important; transform: scale(1.1); }
+        .btn-max:hover { background: rgba(255,255,255,0.1); }
+        .btn-min:hover { background: rgba(255,255,255,0.1); }
+        .window-content { 
+            padding: 16px; 
+            flex-grow: 1; 
+            overflow: auto; 
+            height: calc(100% - 42px); 
+            position: relative;
+        }
 
-        /* Проводник */
+        .notification {
+            position: fixed;
+            bottom: 72px;
+            right: 20px;
+            background: var(--bg-glass) !important;
+            backdrop-filter: blur(25px) saturate(1.2) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(1.2) !important;
+            border: 1px solid var(--border-glass) !important;
+            border-radius: var(--window-round);
+            padding: 16px 24px;
+            z-index: 99999;
+            color: var(--text-color);
+            font-size: 14px;
+            box-shadow: 0 12px 48px var(--shadow-color), 0 0 40px var(--glow-color);
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 380px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: border-radius 0.4s ease;
+        }
+        .notification .n-icon { font-size: 22px; }
+        .notification .n-text { flex: 1; font-weight: 500; }
+        .notification .n-close {
+            cursor: pointer;
+            opacity: 0.4;
+            transition: 0.3s;
+            font-size: 16px;
+            padding: 4px;
+        }
+        .notification .n-close:hover { opacity: 1; transform: scale(1.2); }
+        .notification::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--window-round);
+    padding: 2px;
+    background: var(--accent-gradient);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
+}
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--primary-color); 
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+
         .explorer-layout { display: flex; height: 100%; gap: 15px; }
-        .sidebar { width: 140px; border-right: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 5px; }
-        .sidebar-item { padding: 8px; cursor: pointer; border-radius: 4px; font-size: 13px; }
-        .sidebar-item:hover { background: rgba(255, 255, 255, 0.1); }
-        .file-grid { display: flex; flex-wrap: wrap; gap: 15px; flex-grow: 1; align-content: flex-start; height: 100%; min-height: 200px; }
-        .file-item { width: 85px; text-align: center; cursor: pointer; padding: 8px; border-radius: 6px; border: 1px solid transparent; height: 85px; }
-        .file-item:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255,255,255,0.1); }
+        .sidebar { width: 150px; border-right: 1px solid var(--border-glass); display: flex; flex-direction: column; gap: 4px; padding-right: 8px; }
+        .sidebar-item { padding: 8px 12px; cursor: pointer; border-radius: 8px; font-size: 13px; color: var(--text-color); transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .sidebar-item:hover { background: rgba(255, 255, 255, 0.08); transform: translateX(4px); }
+        .file-grid { display: flex; flex-wrap: wrap; gap: 15px; flex-grow: 1; align-content: flex-start; height: 100%; min-height: 200px; padding: 4px; }
+        .file-item { width: 85px; text-align: center; cursor: pointer; padding: 10px 4px; border-radius: 10px; border: 1px solid transparent; height: 90px; color: var(--text-color); transition: 0.25s; }
+        .file-item:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--border-glass); transform: scale(1.06); }
+        .file-item .file-icon { font-size: 32px; display: block; margin-bottom: 4px; }
+        .file-item .file-name { font-size: 11px; word-break: break-all; line-height: 1.2; }
 
-        /* Paint */
         .paint-layout { display: flex; flex-direction: column; height: 100%; gap: 8px; }
-        .paint-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 6px; border: 1px solid var(--border-glass); }
-        .paint-canvas-container { flex-grow: 1; background: #222; border-radius: 6px; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center; }
-        #paintCanvas { background: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: crosshair; }
+        .paint-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: rgba(0,0,0,0.2); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border-glass); }
+        .paint-toolbar label { font-size: 11px; opacity: 0.6; }
+        .paint-canvas-container { flex-grow: 1; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border-glass); }
+        #paintCanvas { background: #1a1a2e; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: crosshair; border-radius: 8px; }
 
-        /* Консоль */
-        .console-log { width: 100%; height: calc(100% - 35px); background: rgba(0,0,0,0.85); font-family: monospace; font-size: 13px; color: var(--primary-color); padding: 10px; overflow-y: auto; border-radius: 6px 6px 0 0; border: 1px solid var(--border-glass); }
-        .console-input-row { display: flex; background: #000; border: 1px solid var(--border-glass); border-top: none; border-radius: 0 0 6px 6px; padding: 5px; align-items: center; }
-        .console-prefix { color: var(--primary-color); font-family: monospace; padding-left: 5px; font-size: 13px; }
-        .console-input { flex-grow: 1; background: transparent; border: none; color: #fff; font-family: monospace; font-size: 13px; padding-left: 5px; outline: none; }
+        .console-log { width: 100%; height: calc(100% - 40px); background: rgba(0,0,0,0.8); font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 13px; color: var(--primary-color); padding: 12px; overflow-y: auto; border-radius: 10px 10px 0 0; border: 1px solid var(--border-glass); border-bottom: none; }
+        .console-input-row { display: flex; background: rgba(0,0,0,0.8); border: 1px solid var(--border-glass); border-top: none; border-radius: 0 0 10px 10px; padding: 6px 10px; align-items: center; }
+        .console-prefix { color: var(--primary-color); font-family: monospace; padding-left: 5px; font-size: 13px; font-weight: bold; }
+        .console-input { flex-grow: 1; background: transparent; border: none; color: #fff; font-family: monospace; font-size: 13px; padding: 6px 10px; outline: none; }
 
-        /* Калькулятор */
-        .calc-screen { width: 100%; height: 50px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); text-align: right; padding: 10px; font-size: 24px; color: white; margin-bottom: 10px; outline: none; }
+        .calc-screen { width: 100%; height: 60px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); text-align: right; padding: 12px 16px; font-size: 28px; color: var(--text-color); margin-bottom: 12px; outline: none; border-radius: 10px; font-weight: 300; }
         .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .calc-btn { padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: white; font-size: 18px; cursor: pointer; border-radius: 4px; }
-        .calc-btn:hover { background: var(--primary-color); color: black; }
+        .calc-btn { padding: 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); color: var(--text-color); font-size: 18px; cursor: pointer; border-radius: 8px; transition: 0.25s; }
+        .calc-btn:hover { background: var(--primary-color); color: #000; transform: scale(1.06); box-shadow: 0 0 25px var(--glow-color); }
+        .calc-btn.operator { color: var(--primary-color); }
+        .calc-btn.equals { background: var(--accent-gradient); color: #fff; font-weight: bold; }
 
-        /* Кнопки и Слайдеры */
-        .custom-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 6px; }
-        .sys-select { background: #000; color: #fff; border: 1px solid var(--border-glass); padding: 6px; border-radius: 4px; outline: none; font-size: 13px; cursor: pointer; }
-        button.action-btn { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-glass); color: white; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 13px; }
-        button.action-btn:hover { background: var(--primary-color); color: black; font-weight: bold; box-shadow: 0 0 10px var(--primary-color); }
-        textarea { width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); color: white; outline: none; resize: none; border-radius: 6px;}
+        .action-btn { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-glass); color: var(--text-color); padding: 8px 16px; cursor: pointer; border-radius: 8px; font-size: 13px; transition: 0.3s; }
+        .action-btn:hover { background: var(--primary-color); color: #000; font-weight: bold; box-shadow: 0 0 30px var(--glow-color); transform: scale(1.04); }
 
-        /* Поля ввода установщика */
-        .control-group { margin-bottom: 12px; }
-        .control-group label { display: block; font-size: 13px; margin-bottom: 5px; color: #ccc; }
-        .control-group input[type="text"] { width: 100%; padding: 8px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); color: #fff; border-radius: 4px; outline: none; font-size: 13px; }
+        textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); color: var(--text-color); outline: none; resize: none; border-radius: 10px; transition: 0.3s; font-family: inherit; }
+        textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 30px var(--glow-color); }
+
+        .control-group { margin-bottom: 14px; }
+        .control-group label { display: block; font-size: 13px; margin-bottom: 5px; opacity: 0.7; }
+        .control-group input[type="text"] { width: 100%; padding: 10px 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); color: var(--text-color); border-radius: 8px; outline: none; font-size: 13px; transition: 0.3s; }
+        .control-group input[type="text"]:focus { border-color: var(--primary-color); box-shadow: 0 0 30px var(--glow-color); }
         .file-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
         .file-wrapper input[type="file"] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 
-        /* Экран перезагрузки */
-        #reboot-screen { position: fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:99999; display:none; flex-direction:column; align-items:center; justify-content:center; font-family:sans-serif; }
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(0,240,255,0.2); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #0a0a1a; z-index: 999999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-family: var(--font-main);
+        }
+        #login-screen .login-box {
+            background: rgba(10, 15, 30, 0.8);
+            backdrop-filter: blur(40px) saturate(1.3);
+            -webkit-backdrop-filter: blur(40px) saturate(1.3);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: var(--window-round);
+            padding: 50px 60px;
+            text-align: center;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8), 0 0 60px rgba(0,240,255,0.08);
+            min-width: 420px;
+            animation: fadeIn 0.8s ease;
+            transition: border-radius 0.4s ease;
+        }
+        #login-screen .login-box h1 {
+            font-size: 36px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            margin-bottom: 8px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glowPulse 3s infinite;
+        }
+        #login-screen .login-box .sub {
+            font-size: 14px;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+        #login-screen .login-box input[type="password"] {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 14px;
+            color: #fff;
+            outline: none;
+            text-align: center;
+            letter-spacing: 6px;
+            transition: 0.3s;
+        }
+        #login-screen .login-box input[type="password"]:focus {
+            border-color: #00f0ff;
+            box-shadow: 0 0 40px rgba(0,240,255,0.12);
+        }
+        #login-screen .login-box .login-btn {
+            margin-top: 20px;
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        #login-screen .login-box .login-btn:hover {
+            transform: scale(1.04);
+            filter: brightness(1.2);
+            box-shadow: 0 0 50px var(--glow-color);
+        }
+        #login-screen .login-error { color: #ff5f56; font-size: 13px; margin-top: 12px; height: 20px; }
+
+        #power-screen {
+            position: fixed; top:0; left:0; width:100vw; height:100vh;
+            background: #000; z-index: 999998;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            font-family: var(--font-main); color: #fff;
+        }
+        #power-screen .spinner { width: 60px; height: 60px; border: 3px solid rgba(255,255,255,0.05); border-top: 3px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; box-shadow: 0 0 40px var(--glow-color); }
+        #power-screen h2 { font-weight: 300; letter-spacing: 4px; }
+        #power-screen .power-start-btn { margin-top: 30px; padding: 14px 40px; font-size: 18px; font-weight: 600; background: var(--accent-gradient); border: none; border-radius: 14px; color: #fff; cursor: pointer; transition: 0.3s; }
+        #power-screen .power-start-btn:hover { filter: brightness(1.2); transform: scale(1.06); box-shadow: 0 0 50px var(--glow-color); }
+
+        #reboot-screen {
+            position: fixed; top:0; left:0; width:100vw; height:100vh; background:#000; z-index:999997;
+            display:none; flex-direction:column; align-items:center; justify-content:center; font-family:var(--font-main);
+        }
+        #reboot-screen .spinner { width: 50px; height: 50px; border: 3px solid rgba(0,240,255,0.1); border-top: 3px solid var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; box-shadow: 0 0 40px var(--glow-color); }
+        #reboot-screen h2 { color:#fff; font-weight:300; letter-spacing:3px; }
+
+        #start-menu::-webkit-scrollbar { width: 4px; }
+        #start-menu::-webkit-scrollbar-track { background: transparent; }
+        #start-menu::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 2px; box-shadow: 0 0 10px var(--glow-color); }
+
+        .theme-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .theme-btn {
+            padding: 8px 4px;
+            border: 2px solid var(--border-glass);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .theme-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(255,255,255,0.06);
+            transform: scale(1.06);
+        }
+        .theme-btn.active {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 30px var(--glow-color);
+            background: rgba(0,240,255,0.08);
+        }
+        .theme-btn .theme-color {
+            display: block;
+            width: 100%;
+            height: 24px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+        }
+
+        #win-recycle .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            margin-bottom: 4px;
+            transition: 0.2s;
+        }
+        #win-recycle .file-item:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--border-glass);
+        }
+        #win-recycle .file-item .restore-btn {
+            background: rgba(0,240,255,0.12);
+            border: 1px solid var(--border-glass);
+            color: var(--text-color);
+            padding: 2px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+        #win-recycle .file-item .restore-btn:hover {
+            background: var(--primary-color);
+            color: #000;
+            transform: scale(1.06);
+        }
+        #win-recycle .empty-bin-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: rgba(255,80,80,0.12);
+            border: 1px solid rgba(255,80,80,0.25);
+            color: #ff5f56;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        #win-recycle .empty-bin-btn:hover {
+            background: rgba(255,80,80,0.2);
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255,80,80,0.15);
+        }
+
+        .custom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.03);
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: 0.2s;
+        }
+        .custom-row:hover {
+            border-color: var(--border-glass);
+        }
+        .sys-select {
+            background: rgba(0,0,0,0.3);
+            color: var(--text-color);
+            border: 1px solid var(--border-glass);
+            padding: 8px 12px;
+            border-radius: 8px;
+            outline: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .sys-select:hover {
+            border-color: var(--primary-color);
+        }
+        .sys-select:focus {
+            box-shadow: 0 0 20px var(--glow-color);
+        }
     </style>
 </head>
 <body>
 
     <canvas id="bg-canvas"></canvas>
 
-    <input type="file" id="wallpaper-upload" accept="image/*" style="display:none;" onchange="loadWallpaperFile(this)">
+    <!-- LOGIN SCREEN -->
+<div id="login-screen">
+    <div class="login-box">
+        <h1>✦ Windows 67</h1>
+        <div class="sub">Premium Candy Edition 🍬</div>
+        <input type="password" id="login-password" placeholder="••••••••" autofocus 
+               onkeydown="if(event.key==='Enter') tryLogin()">
+        <button class="login-btn" id="login-btn" onclick="tryLogin()">✦ Войти</button>
+        <div id="login-error" class="login-error"></div>
+    </div>
+</div>
 
+    <!-- POWER SCREEN -->
+    <div id="power-screen">
+        <div class="spinner"></div>
+        <h2 id="power-text">Завершение работы...</h2>
+    </div>
+
+    <!-- REBOOT SCREEN -->
+    <div id="reboot-screen">
+        <div class="spinner"></div>
+        <h2 id="reboot-text">Перезагрузка Windows 67...</h2>
+    </div>
+
+    <!-- КОНТЕКСТНЫЕ МЕНЮ -->
     <div id="desktop-menu" class="custom-context-menu">
-        <div class="menu-item" id="menu-paste-item" onclick="contextPasteFile()">📋 Вставить файл</div>
-        <div class="menu-item" onclick="openWindow('win-settings')">⚙️ Персонализация</div>
-        <div class="menu-item" onclick="triggerResetReboot()" style="color:#ff5f56;">🔄 Сброс и Перезагрузка</div>
+        <button class="menu-item" data-action="paste"><span class="icon">📋</span> Вставить</button>
+        <hr class="menu-divider">
+        <button class="menu-item" data-action="settings"><span class="icon">⚙️</span> Персонализация</button>
+        <button class="menu-item" data-action="theme"><span class="icon">🎨</span> Сменить тему</button>
+        <hr class="menu-divider">
+        <button class="menu-item danger" data-action="reboot"><span class="icon">🔄</span> Перезагрузка</button>
+        <button class="menu-item danger" data-action="shutdown"><span class="icon">⏻</span> Выключить</button>
     </div>
 
     <div id="file-menu" class="custom-context-menu">
-        <div class="menu-item" onclick="contextOpenFile()">👁️ Открыть</div>
-        <div class="menu-item" onclick="contextCutFile()">✂️ Вырезать</div>
-        <div class="menu-item" onclick="contextCopyFile()">📋 Копировать</div>
-        <div class="menu-item" id="menu-delete-item" onclick="contextDeleteFile()" style="color:#ff5f56;">🗑️ Удалить</div>
+        <button class="menu-item" data-action="open"><span class="icon">👁️</span> Открыть</button>
+        <hr class="menu-divider">
+        <button class="menu-item" data-action="cut"><span class="icon">✂️</span> Вырезать</button>
+        <button class="menu-item" data-action="copy"><span class="icon">📋</span> Копировать</button>
+        <hr class="menu-divider">
+        <button class="menu-item danger" data-action="delete"><span class="icon">🗑️</span> Удалить</button>
     </div>
 
-    <div id="reboot-screen">
-        <div class="spinner"></div>
-        <h2 id="reboot-text" style="color:#fff; letter-spacing:1px;">Перезагрузка Windows 67...</h2>
+    <div id="app-menu" class="custom-context-menu">
+        <button class="menu-item" data-action="app-open"><span class="icon">▶️</span> Запустить</button>
+        <hr class="menu-divider">
+        <button class="menu-item danger" data-action="app-uninstall"><span class="icon">🗑️</span> Удалить приложение</button>
     </div>
 
+    <!-- ВИДЖЕТЫ -->
+    <div id="widgets-container">
+        <div class="widget clock-widget">
+            <div class="widget-title">🕐 Часы</div>
+            <div class="time" id="widget-time">00:00:00</div>
+            <div class="date" id="widget-date">1 января 2026</div>
+        </div>
+
+        <div class="widget weather-widget">
+            <div class="widget-title">🌤️ Погода</div>
+            <div class="temp" id="widget-temp">--°<span>C</span></div>
+            <div class="desc" id="widget-desc">Загрузка...</div>
+            <div class="details">
+                <span id="widget-humidity">💧 --%</span>
+                <span id="widget-wind">💨 -- м/с</span>
+            </div>
+        </div>
+
+        <div class="widget notes-widget">
+            <div class="widget-title">📝 Заметки</div>
+            <textarea id="notes-textarea" placeholder="Напишите заметку..."></textarea>
+            <div class="note-actions">
+                <button onclick="saveNote()">💾 Сохранить</button>
+                <button onclick="clearNote()">🗑️ Очистить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- РАБОЧИЙ СТОЛ -->
     <div id="desktop">
         <div class="shortcut" id="sh-win-explorer" onclick="openWindow('win-explorer')">
             <div class="icon">📁</div>
@@ -206,7 +964,7 @@
         </div>
         <div class="shortcut" id="sh-win-paint" onclick="openWindow('win-paint')">
             <div class="icon">🎨</div>
-            <div class="title">Paint</div>
+            <div class="title">Paint Pro</div>
         </div>
         <div class="shortcut" id="sh-win-console" onclick="openWindow('win-console')">
             <div class="icon">💻</div>
@@ -228,39 +986,50 @@
             <div class="icon">⚙️</div>
             <div class="title">Параметры</div>
         </div>
+        <div class="shortcut" id="sh-win-recycle" onclick="openWindow('win-recycle')">
+            <div class="icon">🗑️</div>
+            <div class="title" id="recycle-label">Корзина (0)</div>
+        </div>
     </div>
 
+    <!-- СТАРТОВОЕ МЕНЮ -->
     <div id="start-menu">
-        <div class="start-item" id="start-win-explorer" onclick="openWindow('win-explorer'); toggleStart();">📁 Проводник</div>
-        <div class="start-item" id="start-win-paint" onclick="openWindow('win-paint'); toggleStart();">🎨 Графический Paint</div>
-        <div class="start-item" id="start-win-console" onclick="openWindow('win-console'); toggleStart();">💻 Консоль</div>
-        <div class="start-item" id="start-win-calc" onclick="openWindow('win-calc'); toggleStart();">🧮 Калькулятор</div>
-        <div class="start-item" id="start-win-installer" onclick="openWindow('win-installer'); toggleStart();">📦 Установщик программ</div>
-        <div class="start-item" id="start-win-settings" onclick="openWindow('win-settings'); toggleStart();">⚙️ Настройки системы</div>
-        <hr id="start-separator" style="border:none; border-top:1px solid var(--border-glass); margin:5px 0;">
-        <div class="start-item" onclick="triggerResetReboot()" style="color:#ffae19; font-weight:bold;">🔄 Перезагрузка (Сброс)</div>
-        <div class="start-item" onclick="triggerShutdown()" style="color:#ff5f56; font-weight:bold;">🛑 Завершение работы</div>
+        <div class="start-item" onclick="openWindow('win-explorer'); toggleStart();"><span class="icon">📁</span> Проводник</div>
+        <div class="start-item" onclick="openWindow('win-paint'); toggleStart();"><span class="icon">🎨</span> Paint Pro</div>
+        <div class="start-item" onclick="openWindow('win-console'); toggleStart();"><span class="icon">💻</span> Консоль</div>
+        <div class="start-item" onclick="openWindow('win-calc'); toggleStart();"><span class="icon">🧮</span> Калькулятор</div>
+        <div class="start-item" onclick="openWindow('win-installer'); toggleStart();"><span class="icon">📦</span> Установщик</div>
+        <div class="start-item" onclick="openWindow('win-settings'); toggleStart();"><span class="icon">⚙️</span> Настройки</div>
+        <hr style="border:none; border-top:1px solid var(--border-glass); margin:6px 0;">
+        <div id="start-apps-container"></div>
+        <hr id="start-separator" style="border:none; border-top:1px solid var(--border-glass); margin:6px 0;">
+        <div class="start-item" onclick="openWindow('win-recycle'); toggleStart();"><span class="icon">🗑️</span> Корзина</div>
+        <hr style="border:none; border-top:1px solid var(--border-glass); margin:6px 0;">
+        <div class="start-item danger" onclick="triggerShutdown()" style="color:#ff5f56;"><span class="icon">⏻</span> Выключить ПК</div>
+        <div class="start-item" onclick="triggerReboot()" style="color:#ffae19;"><span class="icon">🔄</span> Перезагрузка</div>
     </div>
 
+    <!-- ПАНЕЛЬ ЗАДАЧ -->
     <div id="taskbar">
-        <button id="start-btn" onclick="toggleStart()">❖ Пуск</button>
-        <div id="taskbar-apps" style="display:flex; gap:8px;"></div>
-        <div id="system-tray" style="font-size: 13px; font-weight:600;">00:00</div>
+        <button id="start-btn" onclick="toggleStart()">✦ Пуск</button>
+        <div id="taskbar-apps" style="display:flex; gap:6px; flex:1; padding:0 10px;"></div>
+        <div id="system-tray" style="font-size: 13px; font-weight:500; opacity:0.7;">00:00</div>
     </div>
 
+    <!-- ОКНА -->
     <div id="win-explorer" class="window">
         <div class="window-header">
-            <div class="window-title">Проводник</div>
+            <div class="window-title">📁 Проводник</div>
             <div class="window-controls">
-                <button class="win-btn" onclick="minimizeWindow('win-explorer')">—</button>
-                <button class="win-btn" onclick="maximizeWindow('win-explorer')">🗖</button>
+                <button class="win-btn btn-min" onclick="minimizeWindow('win-explorer')">—</button>
+                <button class="win-btn btn-max" onclick="maximizeWindow('win-explorer')">🗖</button>
                 <button class="win-btn btn-close" onclick="closeWindow('win-explorer')">✕</button>
             </div>
         </div>
-        <div class="window-content" id="explorer-content-zone">
+        <div class="window-content">
             <div class="explorer-layout">
                 <div class="sidebar">
-                    <div class="sidebar-item" onclick="changeFolder('root')">💻 Системный диск (C:)</div>
+                    <div class="sidebar-item" onclick="changeFolder('root')">💻 Системный диск</div>
                     <div class="sidebar-item" onclick="changeFolder('docs')">📂 Документы</div>
                 </div>
                 <div class="file-grid" id="explorer-files"></div>
@@ -268,47 +1037,47 @@
         </div>
     </div>
 
-    <div id="win-paint" class="window" style="width: 720px; height: 510px;">
+    <div id="win-paint" class="window" style="width: 740px; height: 530px;">
         <div class="window-header">
-            <div class="window-title">Paint Creative Studio</div>
+            <div class="window-title">🎨 Paint Pro Studio</div>
             <div class="window-controls">
-                <button class="win-btn" onclick="minimizeWindow('win-paint')">—</button>
-                <button class="win-btn" onclick="maximizeWindow('win-paint')">🗖</button>
+                <button class="win-btn btn-min" onclick="minimizeWindow('win-paint')">—</button>
+                <button class="win-btn btn-max" onclick="maximizeWindow('win-paint')">🗖</button>
                 <button class="win-btn btn-close" onclick="closeWindow('win-paint')">✕</button>
             </div>
         </div>
-        <div class="window-content" style="padding: 8px; overflow:hidden;">
+        <div class="window-content" style="padding: 10px; overflow:hidden;">
             <div class="paint-layout">
                 <div class="paint-toolbar">
-                    <input type="color" id="paintColor" value="#00f0ff" style="cursor:pointer;">
-                    <select id="paintBrush" style="background:#000; color:#fff; border:1px solid var(--border-glass); padding:4px; border-radius:4px;">
-                        <option value="normal">🎨 Обычная кисть</option>
-                        <option value="neon">✨ Неоновое свечение</option>
-                        <option value="blur">💧 Размытый штрих</option>
+                    <input type="color" id="paintColor" value="#00f0ff" style="cursor:pointer; width:40px; height:32px; border:none; border-radius:8px; background:transparent;">
+                    <select id="paintBrush" style="background:rgba(0,0,0,0.3); color:#fff; border:1px solid var(--border-glass); padding:6px 12px; border-radius:8px; cursor:pointer;">
+                        <option value="normal">🎨 Обычная</option>
+                        <option value="neon">✨ Неоновая</option>
+                        <option value="blur">💧 Размытая</option>
                     </select>
-                    <label style="font-size:11px;">Размер:</label>
-                    <input type="range" id="paintSize" min="2" max="40" value="8" style="width:80px;">
-                    <button class="action-btn" onclick="clearPaintCanvas()" style="padding:3px 8px; font-size:11px; margin-left:auto;">Очистить</button>
+                    <label style="font-size:11px; opacity:0.6;">Размер:</label>
+                    <input type="range" id="paintSize" min="2" max="40" value="8" style="width:80px; accent-color:var(--primary-color);">
+                    <button class="action-btn" onclick="clearPaintCanvas()" style="padding:4px 14px; font-size:11px; margin-left:auto;">✕ Очистить</button>
                 </div>
-                <div class="paint-canvas-container" id="paint-container">
-                    <canvas id="paintCanvas" width="620" height="390"></canvas>
+                <div class="paint-canvas-container">
+                    <canvas id="paintCanvas" width="660" height="400"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="win-console" class="window" style="width: 500px; height: 350px;">
+    <div id="win-console" class="window" style="width: 520px; height: 370px;">
         <div class="window-header">
-            <div class="window-title">Системная Консоль v67</div>
+            <div class="window-title">💻 Системная Консоль v67</div>
             <div class="window-controls">
-                <button class="win-btn" onclick="minimizeWindow('win-console')">—</button>
-                <button class="win-btn" onclick="maximizeWindow('win-console')">🗖</button>
+                <button class="win-btn btn-min" onclick="minimizeWindow('win-console')">—</button>
+                <button class="win-btn btn-max" onclick="maximizeWindow('win-console')">🗖</button>
                 <button class="win-btn btn-close" onclick="closeWindow('win-console')">✕</button>
             </div>
         </div>
-        <div class="window-content" style="padding:0;">
+        <div class="window-content" style="padding:8px;">
             <div class="console-log" id="console-output">
-                <div>Windows 67 [Build 7.6 Engine Active]</div>
+                <div>✦ Windows 67 [Premium Candy Edition]</div>
                 <div>Введите 'help' для просмотра команд.</div>
                 <br>
             </div>
@@ -319,12 +1088,12 @@
         </div>
     </div>
 
-    <div id="win-calc" class="window" style="width: 320px; height: 420px;">
+    <div id="win-calc" class="window" style="width: 340px; height: 460px;">
         <div class="window-header">
-            <div class="window-title">Калькулятор</div>
+            <div class="window-title">🧮 Калькулятор</div>
             <div class="window-controls">
-                <button class="win-btn" onclick="minimizeWindow('win-calc')">—</button>
-                <button class="win-btn" onclick="maximizeWindow('win-calc')">🗖</button>
+                <button class="win-btn btn-min" onclick="minimizeWindow('win-calc')">—</button>
+                <button class="win-btn btn-max" onclick="maximizeWindow('win-calc')">🗖</button>
                 <button class="win-btn btn-close" onclick="closeWindow('win-calc')">✕</button>
             </div>
         </div>
@@ -332,17 +1101,17 @@
             <input type="text" class="calc-screen" id="calc-display" readonly value="0">
             <div class="calc-buttons">
                 <button class="calc-btn" onclick="clearCalc()">C</button>
-                <button class="calc-btn" onclick="pressCalc('/')">/</button>
-                <button class="calc-btn" onclick="pressCalc('*')">*</button>
-                <button class="calc-btn" onclick="pressCalc('-')">-</button>
+                <button class="calc-btn operator" onclick="pressCalc('/')">÷</button>
+                <button class="calc-btn operator" onclick="pressCalc('*')">×</button>
+                <button class="calc-btn operator" onclick="pressCalc('-')">−</button>
                 <button class="calc-btn" onclick="pressCalc('7')">7</button>
                 <button class="calc-btn" onclick="pressCalc('8')">8</button>
                 <button class="calc-btn" onclick="pressCalc('9')">9</button>
-                <button class="calc-btn" onclick="pressCalc('+')">+</button>
+                <button class="calc-btn operator" onclick="pressCalc('+')">+</button>
                 <button class="calc-btn" onclick="pressCalc('4')">4</button>
                 <button class="calc-btn" onclick="pressCalc('5')">5</button>
                 <button class="calc-btn" onclick="pressCalc('6')">6</button>
-                <button class="calc-btn" onclick="calculateResult('=')">=</button>
+                <button class="calc-btn equals" onclick="calculateResult()">=</button>
                 <button class="calc-btn" onclick="pressCalc('1')">1</button>
                 <button class="calc-btn" onclick="pressCalc('2')">2</button>
                 <button class="calc-btn" onclick="pressCalc('3')">3</button>
@@ -353,102 +1122,135 @@
 
     <div id="win-notepad" class="window">
         <div class="window-header">
-            <div class="window-title">Блокнот</div>
+            <div class="window-title">📝 Блокнот</div>
             <div class="window-controls">
-                <button class="win-btn" onclick="minimizeWindow('win-notepad')">—</button>
-                <button class="win-btn" onclick="maximizeWindow('win-notepad')">🗖</button>
+                <button class="win-btn btn-min" onclick="minimizeWindow('win-notepad')">—</button>
+                <button class="win-btn btn-max" onclick="maximizeWindow('win-notepad')">🗖</button>
                 <button class="win-btn btn-close" onclick="closeWindow('win-notepad')">✕</button>
             </div>
         </div>
         <div class="window-content">
-            <textarea style="height: calc(100% - 45px);" id="notepad-text"></textarea>
-            <button class="action-btn" onclick="saveFile()" style="margin-top:8px; width:100%;">Сохранить файл в Документы</button>
+            <textarea style="height: calc(100% - 50px);" id="notepad-text"></textarea>
+            <button class="action-btn" onclick="saveFile()" style="margin-top:8px; width:100%;">💾 Сохранить</button>
         </div>
     </div>
 
-    <div id="win-installer" class="window" style="width: 480px; height: 420px;">
+    <div id="win-installer" class="window" style="width: 500px; height: 440px;">
         <div class="window-header">
-            <div class="window-title">Установка программного обеспечения</div>
+            <div class="window-title">📦 Установка программ</div>
             <div class="window-controls">
-                <button class="win-btn" onclick="minimizeWindow('win-installer')">—</button>
-                <button class="win-btn" onclick="maximizeWindow('win-installer')">🗖</button>
+                <button class="win-btn btn-min" onclick="minimizeWindow('win-installer')">—</button>
+                <button class="win-btn btn-max" onclick="maximizeWindow('win-installer')">🗖</button>
                 <button class="win-btn btn-close" onclick="closeWindow('win-installer')">✕</button>
             </div>
         </div>
         <div class="window-content">
-            <h3 style="margin-bottom:12px; font-size:14px; border-bottom:1px solid var(--border-glass); padding-bottom:5px; color:var(--primary-color);">🌐 Установка кастомного HTML-приложения</h3>
-            <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); border-radius: 6px; padding: 12px;">
+            <h3 style="margin-bottom:14px; font-size:14px; border-bottom:1px solid var(--border-glass); padding-bottom:8px; color:var(--primary-color);">🌐 Установка HTML-приложения</h3>
+            <div style="background: rgba(0,0,0,0.15); border: 1px solid var(--border-glass); border-radius: 12px; padding: 16px;">
                 <div class="control-group">
                     <label>Имя программы</label>
                     <input type="text" id="customAppName" placeholder="Например: Моя Игра 2D">
                 </div>
                 <div class="control-group">
-                    <label>Иконка программы (Эмодзи)</label>
-                    <input type="text" id="customAppIcon" value="🚀" style="text-align: center; font-size: 16px;">
+                    <label>Иконка (эмодзи)</label>
+                    <input type="text" id="customAppIcon" value="🚀" style="text-align: center; font-size: 20px;">
                 </div>
                 <div class="control-group">
                     <label>Файл приложения (.html)</label>
                     <div class="file-wrapper">
-                        <button class="action-btn" style="width:100%; padding: 8px;">📁 Выбрать HTML-файл</button>
+                        <button class="action-btn" style="width:100%; padding:10px;">📁 Выбрать HTML-файл</button>
                         <input type="file" id="customAppFile" accept=".html" onchange="loadCustomHtmlApp(this)">
                     </div>
-                    <div id="customFileStatus" style="font-size:12px; color:var(--primary-color); margin-top:5px; display:none;">Файл успешно считан!</div>
+                    <div id="customFileStatus" style="font-size:12px; color:var(--primary-color); margin-top:6px; display:none;">✅ Файл успешно считан!</div>
                 </div>
-                <button class="action-btn" onclick="installCustomHtmlApp()" style="width:100%; margin-top: 5px; background: var(--primary-color); color: #000; font-weight: bold;">📥 Установить на Рабочий Стол</button>
+                <button class="action-btn" onclick="installCustomHtmlApp()" style="width:100%; margin-top:8px; background: var(--accent-gradient); color: #fff; font-weight: bold;">📥 Установить</button>
             </div>
         </div>
     </div>
 
-    <div id="win-settings" class="window" style="width: 500px; height: 580px;">
+    <div id="win-settings" class="window" style="width: 580px; height: 640px;">
         <div class="window-header">
-            <div class="window-title">Параметры системы</div>
+            <div class="window-title">⚙️ Параметры системы</div>
             <div class="window-controls">
-                <button class="win-btn" onclick="minimizeWindow('win-settings')">—</button>
-                <button class="win-btn" onclick="maximizeWindow('win-settings')">🗖</button>
+                <button class="win-btn btn-min" onclick="minimizeWindow('win-settings')">—</button>
+                <button class="win-btn btn-max" onclick="maximizeWindow('win-settings')">🗖</button>
                 <button class="win-btn btn-close" onclick="closeWindow('win-settings')">✕</button>
             </div>
         </div>
         <div class="window-content">
-            <h3 style="margin-bottom:12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:5px;">Цветовая Тема Системы</h3>
-            <div class="custom-row">
-                <label>Главный цвет интерфейса:</label>
-                <input type="color" id="sys-primary-color" value="#00f0ff" onchange="updateSystemTheme()" style="cursor:pointer; border:none; background:transparent; width:45px; height:30px;">
+            <h3 style="margin-bottom:12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:8px;">🎨 Темы оформления</h3>
+            <div class="theme-selector" id="theme-selector">
+                <div class="theme-btn active" data-theme="dark" onclick="applyTheme('dark')">
+                    <span class="theme-color" style="background: #050510;"></span> Тёмная
+                </div>
+                <div class="theme-btn" data-theme="light" onclick="applyTheme('light')">
+                    <span class="theme-color" style="background: #e8ecf1;"></span> Светлая
+                </div>
+                <div class="theme-btn" data-theme="dark-blue" onclick="applyTheme('dark-blue')">
+                    <span class="theme-color" style="background: #0a0e2a;"></span> Синяя
+                </div>
+                <div class="theme-btn" data-theme="matrix" onclick="applyTheme('matrix')">
+                    <span class="theme-color" style="background: #000a00;"></span> Matrix
+                </div>
+                <div class="theme-btn" data-theme="sunset" onclick="applyTheme('sunset')">
+                    <span class="theme-color" style="background: #1a0a1a;"></span> Закат
+                </div>
+                <div class="theme-btn" data-theme="pink" onclick="applyTheme('pink')">
+                    <span class="theme-color" style="background: #1a0a1a;"></span> Розовая 🌸
+                </div>
             </div>
 
+            <h3 style="margin:16px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:8px;">🎨 Цвет интерфейса</h3>
+            <div class="custom-row">
+                <label>Главный цвет:</label>
+                <input type="color" id="sys-primary-color" value="#00f0ff" onchange="updateSystemTheme()" style="cursor:pointer; border:none; background:transparent; width:50px; height:34px; border-radius:8px;">
+            </div>
+
+            <h3 style="margin:16px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:8px;">🔮 Прозрачность</h3>
             <div class="custom-row" style="flex-direction: column; align-items: stretch; gap: 8px;">
                 <div style="display:flex; justify-content:space-between; font-size:13px;">
                     <label>Прозрачность окон и панелей:</label>
                     <span id="opacity-tx" style="color:var(--primary-color); font-weight:bold;">75%</span>
                 </div>
-                <input type="range" min="10" max="100" value="75" id="opacity-sl" style="width:100%;" oninput="updateOpacityValue()">
+                <input type="range" min="10" max="100" value="75" id="opacity-sl" style="width:100%; accent-color:var(--primary-color);" oninput="updateOpacityValue()">
             </div>
 
-            <h3 style="margin:15px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:5px;">Установка Фона (Обоев)</h3>
+            <h3 style="margin:16px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:8px;">🖼️ Обои</h3>
             <div class="custom-row" style="flex-direction:column; align-items:stretch; gap:10px;">
-                <button class="action-btn" onclick="document.getElementById('wallpaper-upload').click()" style="width:100%; padding:8px; font-weight:bold; background: rgba(0,240,255,0.15);">📁 Загрузить обои с ПК</button>
+                <button class="action-btn" onclick="document.getElementById('wallpaper-upload').click()" style="width:100%; padding:10px; font-weight:bold; background: rgba(0,240,255,0.08);">📁 Загрузить обои</button>
                 <div style="display:flex; gap:8px;">
-                    <input type="text" id="bg-url-input" placeholder="Вставить URL-ссылку на картинку..." style="flex-grow:1; background:#000; color:#fff; border:1px solid var(--border-glass); padding:6px; border-radius:4px; outline:none; font-size:12px;">
+                    <input type="text" id="bg-url-input" placeholder="URL картинки..." style="flex-grow:1; background:rgba(0,0,0,0.2); color:var(--text-color); border:1px solid var(--border-glass); padding:8px 12px; border-radius:8px; outline:none; font-size:12px;">
                     <button class="action-btn" onclick="applyCustomWallpaper()">ОК</button>
                 </div>
+                <button class="action-btn" onclick="resetWallpaper()" style="width:100%; background:rgba(255,80,80,0.08);">🔄 Сбросить обои</button>
             </div>
 
-            <h3 style="margin:15px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:5px;">Выбор Живого Эффекта</h3>
+            <h3 style="margin:16px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:8px;">📐 Скругление окон</h3>
+            <div class="custom-row" style="flex-direction: column; align-items: stretch; gap: 8px;">
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <label>Скругление:</label>
+                    <span id="round-tx" style="color:var(--primary-color); font-weight:bold;">18px</span>
+                </div>
+                <input type="range" min="0" max="30" value="18" id="round-sl" style="width:100%; accent-color:var(--primary-color);" oninput="updateStyles()">
+            </div>
+
+            <h3 style="margin:16px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:8px;">✨ Эффекты фона</h3>
             <div class="custom-row">
                 <label>Активный эффект:</label>
                 <select id="fx-select" class="sys-select" onchange="changeFxEffect()">
-                    <option value="matrix">Matrix (Точки) 🤖</option>
+                    <option value="matrix">Matrix 🤖</option>
                     <option value="snow">Снегопад ❄️</option>
                     <option value="digital_rain">Цифровой дождь 💾</option>
-                    <option value="none">Без эффектов (Чистый фон) 🌌</option>
+                    <option value="none">Без эффектов 🌌</option>
                 </select>
             </div>
 
             <div class="custom-row" style="flex-direction: column; align-items: stretch; gap: 8px;" id="speed-row">
                 <div style="display:flex; justify-content:space-between; font-size:13px;">
-                    <label>Скорость анимации фона:</label>
+                    <label>Скорость:</label>
                     <span id="speed-tx" style="color:var(--primary-color); font-weight:bold;">x1</span>
                 </div>
-                <input type="range" min="0" max="10" step="0.5" value="1" id="speed-sl" style="width:100%;" oninput="updateSpeedValue()">
+                <input type="range" min="0" max="10" step="0.5" value="1" id="speed-sl" style="width:100%; accent-color:var(--primary-color);" oninput="updateSpeedValue()">
             </div>
 
             <div class="custom-row" style="flex-direction: column; align-items: stretch; gap: 8px;" id="size-row">
@@ -456,23 +1258,757 @@
                     <label>Размер частиц:</label>
                     <span id="size-tx" style="color:var(--primary-color); font-weight:bold;">2px</span>
                 </div>
-                <input type="range" min="1" max="25" step="1" value="2" id="size-sl" style="width:100%;" oninput="updateParticleSize()">
+                <input type="range" min="1" max="25" step="1" value="2" id="size-sl" style="width:100%; accent-color:var(--primary-color);" oninput="updateParticleSize()">
             </div>
 
-            <h3 style="margin:15px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:5px;">Настройки Интерфейса</h3>
-            <div class="custom-row"><label>Скругление окон:</label><input type="range" min="0" max="30" value="12" id="round-sl" oninput="updateStyles()"><span id="round-tx">12px</span></div>
+            <h3 style="margin:16px 0 12px; font-size:15px; border-bottom:1px solid var(--border-glass); padding-bottom:8px;">🔒 Безопасность</h3>
+            <div class="custom-row" style="flex-direction:column; align-items:stretch; gap:10px;">
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <label style="font-size:13px; min-width:120px;">Новый пароль:</label>
+                    <input type="text" id="new-password-input" placeholder="минимум 4 символа" style="flex:1; background:rgba(0,0,0,0.2); color:var(--text-color); border:1px solid var(--border-glass); padding:8px 12px; border-radius:8px; outline:none;">
+                </div>
+                <button class="action-btn" onclick="changePassword()" style="width:100%;">🔑 Сменить пароль</button>
+                <div id="password-status" style="font-size:13px; color:var(--primary-color); text-align:center;"></div>
+            </div>
         </div>
     </div>
 
+    <div id="win-recycle" class="window" style="width: 520px; height: 420px;">
+        <div class="window-header">
+            <div class="window-title">🗑️ Корзина</div>
+            <div class="window-controls">
+                <button class="win-btn btn-min" onclick="minimizeWindow('win-recycle')">—</button>
+                <button class="win-btn btn-max" onclick="maximizeWindow('win-recycle')">🗖</button>
+                <button class="win-btn btn-close" onclick="closeWindow('win-recycle')">✕</button>
+            </div>
+        </div>
+        <div class="window-content">
+            <div id="recycle-list"></div>
+            <button class="empty-bin-btn" onclick="emptyRecycleBin()">🗑️ Очистить корзину</button>
+        </div>
+    </div>
+
+    <input type="file" id="wallpaper-upload" accept="image/*" style="display:none;" onchange="loadWallpaperFile(this)">
+
     <script>
-        // --- ДВИЖОК ЖИВЫХ ЧАСТИЦ ---
+        // ============================================
+        // ВЕСЬ СКРИПТ
+        // ============================================
+
+        // ============================================
+        // КОРЗИНА
+        // ============================================
+        let recycleBin = [];
+
+        function addToRecycle(file) {
+            recycleBin.push({ ...file, deletedAt: new Date().toLocaleString() });
+            updateBinUI();
+            renderRecycleList();
+        }
+
+        function restoreFromRecycle(index) {
+            const file = recycleBin[index];
+            if (!file) return;
+            if (file.fromDesktop) {
+                desktopFiles.push({ name: file.name, content: file.content, icon: file.icon });
+                renderDesktopFiles();
+            } else {
+                if (!filesData[file.folder]) filesData[file.folder] = [];
+                filesData[file.folder].push({ name: file.name, content: file.content, icon: file.icon });
+                renderFiles(currentFolder);
+            }
+            recycleBin.splice(index, 1);
+            updateBinUI();
+            renderRecycleList();
+            showNotification('Файл восстановлен! ↩️', '↩️');
+        }
+
+        function emptyRecycleBin() {
+            if (recycleBin.length === 0) return;
+            if (confirm('Вы уверены, что хотите очистить корзину?')) {
+                recycleBin = [];
+                updateBinUI();
+                renderRecycleList();
+                showNotification('Корзина очищена 🗑️', '🗑️');
+            }
+        }
+
+        function updateBinUI() {
+            const count = recycleBin.length;
+            const label = document.getElementById('recycle-label');
+            if (label) label.textContent = 'Корзина (' + count + ')';
+        }
+
+        function renderRecycleList() {
+            const list = document.getElementById('recycle-list');
+            if (!list) return;
+            list.innerHTML = '';
+            if (recycleBin.length === 0) {
+                list.innerHTML = '<div style="text-align:center; opacity:0.3; padding:40px; font-size:14px;">🗑️ Корзина пуста</div>';
+                return;
+            }
+            recycleBin.forEach((file, index) => {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                div.innerHTML = `
+                    <span>${file.icon} ${file.name}</span>
+                    <span style="font-size:11px; opacity:0.3;">${file.deletedAt || ''}</span>
+                    <button class="restore-btn" onclick="restoreFromRecycle(${index})">↩ Восстановить</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        // ============================================
+        // КОНТЕКСТНОЕ МЕНЮ
+        // ============================================
+        let contextTarget = null;
+        let contextTargetType = 'desktop';
+        let contextFileName = null;
+        let contextAppId = null;
+
+        function closeAllMenus() {
+            document.querySelectorAll('.custom-context-menu').forEach(m => m.style.display = 'none');
+        }
+
+        function showMenu(menuId, x, y) {
+            closeAllMenus();
+            const menu = document.getElementById(menuId);
+            if (!menu) return;
+            menu.style.display = 'flex';
+            menu.style.left = Math.min(x, window.innerWidth - 250) + 'px';
+            menu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
+        }
+
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            closeAllMenus();
+            if (e.target.closest('#widgets-container')) return;
+            
+            const customAppItem = e.target.closest('.shortcut[data-custom-app="true"]');
+            if (customAppItem) {
+                contextTargetType = 'customApp';
+                contextAppId = customAppItem.id.replace('sh-', '');
+                contextTarget = customAppItem;
+                showMenu('app-menu', e.clientX, e.clientY);
+                return;
+            }
+            
+            const fileItem = e.target.closest('.file-item') || e.target.closest('.shortcut[data-file="true"]');
+            if (fileItem) {
+                contextTargetType = 'file';
+                contextFileName = fileItem.getAttribute('data-name');
+                contextTarget = fileItem;
+                showMenu('file-menu', e.clientX, e.clientY);
+                return;
+            }
+            
+            if (e.target.closest('#sh-win-recycle')) return;
+            
+            contextTargetType = 'desktop';
+            contextTarget = null;
+            contextFileName = null;
+            contextAppId = null;
+            
+            if (e.target.closest('#win-explorer') || e.target.closest('#explorer-content-zone')) {
+                contextTargetType = 'explorer';
+            }
+            showMenu('desktop-menu', e.clientX, e.clientY);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.custom-context-menu')) closeAllMenus();
+        });
+
+        document.querySelectorAll('.custom-context-menu .menu-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const action = this.dataset.action;
+                switch(action) {
+                    case 'paste': contextPasteFile(); break;
+                    case 'settings': openWindow('win-settings'); break;
+                    case 'theme': openWindow('win-settings'); break;
+                    case 'reboot': triggerReboot(); break;
+                    case 'shutdown': triggerShutdown(); break;
+                    case 'open': contextOpenFile(); break;
+                    case 'cut': contextCutFile(); break;
+                    case 'copy': contextCopyFile(); break;
+                    case 'delete': contextDeleteFile(); break;
+                    case 'app-open': if (contextAppId) openWindow(contextAppId); break;
+                    case 'app-uninstall': uninstallCustomApp(contextAppId); break;
+                }
+                closeAllMenus();
+            });
+        });
+
+        // ============================================
+        // ФУНКЦИИ КОНТЕКСТНОГО МЕНЮ
+        // ============================================
+        let fileClipboard = null;
+        let isCutOperation = false;
+        let currentFolder = 'root';
+
+        function contextOpenFile() {
+            if (contextTargetType === 'customApp') { if (contextAppId) openWindow(contextAppId); return; }
+            if (!contextFileName) return;
+            let file;
+            if (contextTargetType === 'desktop' || (contextTarget && contextTarget.hasAttribute('data-desktop'))) {
+                file = desktopFiles.find(f => f.name === contextFileName);
+            } else {
+                file = filesData[currentFolder]?.find(f => f.name === contextFileName);
+            }
+            if (file) {
+                document.getElementById('notepad-text').value = file.content;
+                openWindow('win-notepad');
+            }
+        }
+
+        function contextCopyFile() {
+            if (contextTargetType === 'customApp') return;
+            if (!contextFileName) return;
+            let file;
+            if (contextTargetType === 'desktop' || (contextTarget && contextTarget.hasAttribute('data-desktop'))) {
+                file = desktopFiles.find(f => f.name === contextFileName);
+            } else {
+                file = filesData[currentFolder]?.find(f => f.name === contextFileName);
+            }
+            if (file) { fileClipboard = { ...file }; isCutOperation = false; showNotification('Файл скопирован 📋', '📋'); }
+        }
+
+        function contextCutFile() {
+            if (contextTargetType === 'customApp') return;
+            if (!contextFileName) return;
+            let idx;
+            if (contextTargetType === 'desktop' || (contextTarget && contextTarget.hasAttribute('data-desktop'))) {
+                idx = desktopFiles.findIndex(f => f.name === contextFileName);
+                if (idx > -1) { fileClipboard = desktopFiles.splice(idx, 1)[0]; isCutOperation = true; renderDesktopFiles(); showNotification('Файл вырезан ✂️', '✂️'); }
+            } else {
+                idx = filesData[currentFolder]?.findIndex(f => f.name === contextFileName);
+                if (idx > -1 && idx !== undefined) { fileClipboard = filesData[currentFolder].splice(idx, 1)[0]; isCutOperation = true; renderFiles(currentFolder); showNotification('Файл вырезан ✂️', '✂️'); }
+            }
+        }
+
+        function contextPasteFile() {
+            if (!fileClipboard) { showNotification('Нет файла для вставки', '⚠️'); return; }
+            let targetList;
+            if (contextTargetType === 'desktop' || contextTargetType === 'file') {
+                targetList = desktopFiles;
+            } else {
+                targetList = filesData[currentFolder] || [];
+            }
+            let newName = fileClipboard.name;
+            let counter = 1;
+            while(targetList.some(f => f.name === newName)) {
+                let parts = fileClipboard.name.split('.');
+                if(parts.length > 1) { let ext = parts.pop(); newName = `${parts.join('.')}_копия${counter}.${ext}`; }
+                else { newName = `${fileClipboard.name}_копия${counter}`; }
+                counter++;
+            }
+            let fileToPaste = { ...fileClipboard, name: newName };
+            targetList.push(fileToPaste);
+            if (isCutOperation) fileClipboard = null;
+            renderFiles(currentFolder);
+            renderDesktopFiles();
+            showNotification('Файл вставлен 📋', '📋');
+        }
+
+        function contextDeleteFile() {
+            if (contextTargetType === 'customApp') { uninstallCustomApp(contextAppId); return; }
+            if (!contextFileName) return;
+            let file, fromDesktop = false, folder = currentFolder;
+            if (contextTargetType === 'desktop' || (contextTarget && contextTarget.hasAttribute('data-desktop'))) {
+                const idx = desktopFiles.findIndex(f => f.name === contextFileName);
+                if (idx > -1) { file = desktopFiles[idx]; fromDesktop = true; desktopFiles.splice(idx, 1); renderDesktopFiles(); }
+            } else {
+                const idx = filesData[currentFolder]?.findIndex(f => f.name === contextFileName);
+                if (idx > -1 && idx !== undefined) { file = filesData[currentFolder][idx]; filesData[currentFolder].splice(idx, 1); renderFiles(currentFolder); }
+            }
+            if (file) { file.fromDesktop = fromDesktop; file.folder = folder; addToRecycle(file); showNotification('Файл удалён в корзину 🗑️', '🗑️'); }
+        }
+
+        // ============================================
+        // УДАЛЕНИЕ ПРИЛОЖЕНИЙ
+        // ============================================
+        function uninstallCustomApp(appId) {
+            if (!appId) { showNotification('Ошибка: приложение не найдено', '❌'); return; }
+            if (!confirm(`Вы действительно хотите удалить приложение?`)) return;
+            closeWindow(appId);
+            const winEl = document.getElementById(appId); if (winEl) winEl.remove();
+            const shEl = document.getElementById('sh-' + appId); if (shEl) shEl.remove();
+            const startEl = document.getElementById('start-' + appId); if (startEl) startEl.remove();
+            installedAppsList = installedAppsList.filter(app => app.id !== appId);
+            renderStartMenuApps();
+            updateTaskbar();
+            showNotification('Приложение удалено 🗑️', '🗑️');
+        }
+
+        // ============================================
+        // ТЕМЫ
+        // ============================================
+        let currentTheme = 'dark';
+
+        function applyTheme(theme) {
+            currentTheme = theme;
+            document.documentElement.setAttribute('data-theme', theme);
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.theme === theme);
+            });
+            localStorage.setItem('w67-theme', theme);
+            const canvas = document.getElementById('bg-canvas');
+            if (canvas) {
+                canvas.style.background = getComputedStyle(document.documentElement).getPropertyValue('--bg-canvas').trim();
+            }
+            setTimeout(() => updateOpacityValue(), 50);
+            setTimeout(() => updateStyles(), 100);
+            showNotification('Тема изменена на ' + theme + ' 🎨', '🎨');
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem('w67-theme');
+            if (saved) applyTheme(saved);
+        }
+
+        // ============================================
+        // ПРОЗРАЧНОСТЬ
+        // ============================================
+        function updateOpacityValue() {
+            const val = document.getElementById('opacity-sl').value;
+            const alpha = val / 100;
+            document.getElementById('opacity-tx').innerText = val + '%';
+            
+            const bgGlass = `rgba(10, 15, 30, ${alpha})`;
+            const bgWidget = `rgba(10, 15, 30, ${alpha * 0.7})`;
+            
+            document.documentElement.style.setProperty('--glass-opacity', alpha);
+            
+            document.querySelectorAll('.window, #taskbar, #start-menu, .widget, .notification, .custom-context-menu, .glass').forEach(el => {
+                if (el && el.id !== 'login-screen' && !el.closest('#login-screen')) {
+                    el.style.setProperty('--bg-glass', bgGlass);
+                    el.style.background = bgGlass;
+                }
+            });
+            
+            document.querySelectorAll('.widget').forEach(el => {
+                el.style.background = bgWidget;
+            });
+        }
+
+        // ============================================
+        // ОБОИ
+        // ============================================
+        function loadWallpaperFile(input) {
+            if (!input || !input.files || !input.files[0]) {
+                showNotification('Файл не выбран!', '⚠️');
+                return;
+            }
+            
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const imageUrl = e.target.result;
+                    document.body.style.backgroundImage = `url('${imageUrl}')`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundRepeat = 'no-repeat';
+                    document.getElementById('bg-canvas').style.opacity = '0.3';
+                    showNotification('Обои установлены! 🖼️', '🖼️');
+                } catch (err) {
+                    showNotification('Ошибка загрузки файла!', '❌');
+                    console.error(err);
+                }
+            };
+            
+            reader.onerror = function() {
+                showNotification('Ошибка чтения файла!', '❌');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        function applyCustomWallpaper() {
+            const url = document.getElementById('bg-url-input').value.trim();
+            if (!url) {
+                showNotification('Введите URL картинки!', '⚠️');
+                return;
+            }
+            
+            try {
+                new URL(url);
+            } catch {
+                showNotification('Неверный URL!', '❌');
+                return;
+            }
+            
+            document.body.style.backgroundImage = `url('${url}')`;
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundRepeat = 'no-repeat';
+            document.getElementById('bg-canvas').style.opacity = '0.3';
+            showNotification('Обои установлены! 🖼️', '🖼️');
+        }
+
+        function resetWallpaper() {
+            document.body.style.backgroundImage = 'none';
+            document.body.style.backgroundSize = '';
+            document.body.style.backgroundPosition = '';
+            document.body.style.backgroundRepeat = '';
+            document.getElementById('bg-canvas').style.opacity = '1';
+            showNotification('Обои сброшены', '🔄');
+        }
+
+        // ============================================
+        // СКРУГЛЕНИЕ
+        // ============================================
+        function updateStyles() {
+            const rnd = document.getElementById('round-sl').value;
+            const px = rnd + 'px';
+            
+            document.documentElement.style.setProperty('--window-round', px);
+            document.getElementById('round-tx').innerText = px;
+            
+            const elements = [
+                ...document.querySelectorAll('.window'),
+                ...document.querySelectorAll('.widget'),
+                ...document.querySelectorAll('.custom-context-menu'),
+                ...document.querySelectorAll('#start-menu'),
+                ...document.querySelectorAll('.notification'),
+                ...document.querySelectorAll('#login-screen .login-box'),
+                ...document.querySelectorAll('.glass'),
+                ...document.querySelectorAll('#taskbar')
+            ];
+            
+            elements.forEach(el => {
+                if (el) {
+                    el.style.borderRadius = px;
+                    const header = el.querySelector('.window-header');
+                    if (header) {
+                        header.style.borderRadius = `${px} ${px} 0 0`;
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // ВИДЖЕТЫ
+        // ============================================
+        function updateClockWidget() {
+            const now = new Date();
+            document.getElementById('widget-time').textContent = now.toLocaleTimeString();
+            document.getElementById('widget-date').textContent = now.toLocaleDateString('ru-RU', {
+                day: 'numeric', month: 'long', year: 'numeric'
+            });
+        }
+        setInterval(updateClockWidget, 1000);
+        updateClockWidget();
+
+        const weatherData = [
+            { temp: 22, desc: 'Ясно ☀️', humidity: 45, wind: 3 },
+            { temp: 18, desc: 'Облачно ⛅', humidity: 60, wind: 5 },
+            { temp: 25, desc: 'Солнечно 🌞', humidity: 35, wind: 2 },
+            { temp: 12, desc: 'Дождь 🌧️', humidity: 85, wind: 7 },
+            { temp: 30, desc: 'Жарко 🔥', humidity: 30, wind: 1 },
+        ];
+
+        function updateWeather() {
+            const data = weatherData[Math.floor(Math.random() * weatherData.length)];
+            document.getElementById('widget-temp').innerHTML = data.temp + '°<span>C</span>';
+            document.getElementById('widget-desc').textContent = data.desc;
+            document.getElementById('widget-humidity').textContent = '💧 ' + data.humidity + '%';
+            document.getElementById('widget-wind').textContent = '💨 ' + data.wind + ' м/с';
+        }
+        updateWeather();
+        setInterval(updateWeather, 60000);
+
+        function loadNote() {
+            const saved = localStorage.getItem('w67-note');
+            if (saved) document.getElementById('notes-textarea').value = saved;
+        }
+        loadNote();
+
+        function saveNote() {
+            const text = document.getElementById('notes-textarea').value;
+            localStorage.setItem('w67-note', text);
+            showNotification('Заметка сохранена! 💾', '💾');
+        }
+
+        function clearNote() {
+            if (confirm('Очистить заметку?')) {
+                document.getElementById('notes-textarea').value = '';
+                localStorage.removeItem('w67-note');
+                showNotification('Заметка очищена 🗑️', '🗑️');
+            }
+        }
+
+        // ============================================
+        // УВЕДОМЛЕНИЯ
+        // ============================================
+        function showNotification(message, icon = 'ℹ️') {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.innerHTML = `
+                <span class="n-icon">${icon}</span>
+                <span class="n-text">${message}</span>
+                <span class="n-close" onclick="this.parentElement.remove()">✕</span>
+            `;
+            document.body.appendChild(notif);
+            setTimeout(() => {
+                notif.style.opacity = '0';
+                notif.style.transition = 'opacity 0.4s, transform 0.4s';
+                notif.style.transform = 'translateY(-30px) scale(0.95)';
+                setTimeout(() => notif.remove(), 500);
+            }, 3500);
+        }
+
+        // ============================================
+// ЛОГИН — ПРОСТОЙ И НАДЁЖНЫЙ ДЛЯ ELECTRON!
+// ============================================
+let systemPassword = "1234";
+let isLoggedIn = false;
+
+// ГЛАВНАЯ ФУНКЦИЯ ВХОДА
+function tryLogin() {
+    console.log('🔐 Попытка входа...');
+    
+    const input = document.getElementById('login-password');
+    const error = document.getElementById('login-error');
+    
+    if (!input) {
+        console.error('❌ Поле ввода не найдено!');
+        return;
+    }
+    
+    console.log('📝 Введён пароль:', input.value);
+    
+    if (input.value === systemPassword) {
+        console.log('✅ Пароль верный! Вход выполнен.');
+        isLoggedIn = true;
+        
+        // Скрываем экран входа
+        const loginScreen = document.getElementById('login-screen');
+        if (loginScreen) loginScreen.style.display = 'none';
+        
+        // Показываем рабочий стол
+        const desktop = document.getElementById('desktop');
+        if (desktop) desktop.classList.add('active');
+        
+        // Показываем панель задач
+        const taskbar = document.getElementById('taskbar');
+        if (taskbar) taskbar.classList.add('active');
+        
+        // Скрываем стартовое меню
+        const startMenu = document.getElementById('start-menu');
+        if (startMenu) startMenu.classList.remove('active');
+        
+        // Инициализируем систему
+        initSystem();
+        
+        showNotification('Добро пожаловать в Windows 67! ✨', '👋');
+    } else {
+        console.log('❌ Неверный пароль');
+        if (error) {
+            error.textContent = '❌ Неверный пароль';
+        }
+        if (input) {
+            input.value = '';
+            input.focus();
+            input.style.borderColor = '#ff5f56';
+            setTimeout(() => { 
+                if (input) input.style.borderColor = ''; 
+            }, 1000);
+        }
+    }
+}
+
+// ДЕЛАЕМ ФУНКЦИЮ ГЛОБАЛЬНОЙ ДЛЯ HTML
+window.tryLogin = tryLogin;
+
+console.log('✅ Функция tryLogin зарегистрирована глобально');
+        // НАЗНАЧЕНИЕ ОБРАБОТЧИКОВ ДЛЯ ELECTRON
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM загружен! Назначаем обработчики...');
+            
+            const loginBtn = document.getElementById('login-btn');
+            const loginInput = document.getElementById('login-password');
+            
+            if (loginBtn) {
+                console.log('✅ Кнопка входа найдена');
+                loginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🖱️ Клик по кнопке "Войти"');
+                    window.tryLogin();
+                });
+                console.log('✅ Обработчик на кнопку назначен');
+            } else {
+                console.error('❌ Кнопка входа НЕ найдена!');
+            }
+            
+            if (loginInput) {
+                console.log('✅ Поле ввода найдено');
+                loginInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        console.log('⌨️ Нажат Enter в поле ввода');
+                        window.tryLogin();
+                    }
+                });
+                loginInput.focus();
+                console.log('✅ Обработчик на поле ввода назначен');
+            } else {
+                console.error('❌ Поле ввода НЕ найдено!');
+            }
+        });
+
+        // ДУБЛИРУЕМ ДЛЯ ELECTRON
+        setTimeout(function() {
+            console.log('🔄 Повторная попытка назначения обработчиков...');
+            const loginBtn = document.getElementById('login-btn');
+            if (loginBtn && !loginBtn._hasListener) {
+                loginBtn._hasListener = true;
+                loginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.tryLogin();
+                });
+                console.log('✅ Обработчик на кнопку (повторно)');
+            }
+            
+            const loginInput = document.getElementById('login-password');
+            if (loginInput && !loginInput._hasListener) {
+                loginInput._hasListener = true;
+                loginInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        window.tryLogin();
+                    }
+                });
+                console.log('✅ Обработчик на поле ввода (повторно)');
+            }
+        }, 500);
+
+        // ============================================
+        // POWER
+        // ============================================
+        function triggerShutdown() {
+            const powerScreen = document.getElementById('power-screen');
+            const spinner = powerScreen.querySelector('.spinner');
+            const text = document.getElementById('power-text');
+            const existingBtn = powerScreen.querySelector('.power-start-btn');
+            if (existingBtn) existingBtn.remove();
+            powerScreen.style.display = 'flex';
+            spinner.style.display = 'block';
+            text.textContent = 'Завершение работы...';
+            document.getElementById('desktop').classList.remove('active');
+            document.getElementById('taskbar').classList.remove('active');
+            document.getElementById('start-menu').classList.remove('active');
+            document.querySelectorAll('.window.active').forEach(w => w.classList.remove('active'));
+            openWindows.clear();
+            updateTaskbar();
+            setTimeout(() => {
+                text.textContent = 'ПК выключен. Нажмите "Пуск" для включения.';
+                spinner.style.display = 'none';
+                const startBtn = document.createElement('button');
+                startBtn.className = 'power-start-btn';
+                startBtn.textContent = '✦ Пуск';
+                startBtn.onclick = () => {
+                    powerScreen.style.display = 'none';
+                    document.getElementById('login-screen').style.display = 'flex';
+                    document.getElementById('login-password').value = '';
+                    document.getElementById('login-error').textContent = '';
+                    document.getElementById('login-password').focus();
+                };
+                powerScreen.appendChild(startBtn);
+            }, 1500);
+        }
+
+        function triggerReboot() {
+            const rebootScreen = document.getElementById('reboot-screen');
+            const text = document.getElementById('reboot-text');
+            rebootScreen.style.display = 'flex';
+            text.textContent = 'Перезагрузка Windows 67...';
+            document.getElementById('desktop').classList.remove('active');
+            document.getElementById('taskbar').classList.remove('active');
+            document.getElementById('start-menu').classList.remove('active');
+            document.querySelectorAll('.window.active').forEach(w => w.classList.remove('active'));
+            openWindows.clear();
+            updateTaskbar();
+            setTimeout(() => {
+                rebootScreen.style.display = 'none';
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('login-password').value = '';
+                document.getElementById('login-error').textContent = '';
+                document.getElementById('login-password').focus();
+                isLoggedIn = false;
+            }, 1500);
+        }
+
+        // ============================================
+        // SYSTEM INIT
+        // ============================================
+        function initSystem() {
+            renderFiles('root');
+            renderDesktopFiles();
+            renderStartMenuApps();
+            installedAppsList.forEach(app => {
+                if(!document.getElementById(app.id)) {
+                    installCustomHtmlApp(app);
+                }
+            });
+            loadTheme();
+            renderRecycleList();
+            updateBinUI();
+            setTimeout(() => updateOpacityValue(), 100);
+            setTimeout(() => updateStyles(), 150);
+            clock();
+            setTimeout(() => {
+                document.getElementById('login-password').value = '';
+                document.getElementById('login-error').textContent = '';
+            }, 100);
+        }
+
+        function renderStartMenuApps() {
+            const container = document.getElementById('start-apps-container');
+            if (!container) return;
+            container.innerHTML = '';
+            installedAppsList.forEach(app => {
+                const item = document.createElement('div');
+                item.className = 'start-item';
+                item.id = 'start-' + app.id;
+                item.onclick = () => { openWindow(app.id); toggleStart(); };
+                item.innerHTML = `<span class="icon">${app.icon}</span> ${app.name}`;
+                container.appendChild(item);
+            });
+        }
+
+        // ============================================
+        // CHANGE PASSWORD
+        // ============================================
+        function changePassword() {
+            const input = document.getElementById('new-password-input');
+            const status = document.getElementById('password-status');
+            if (!input) return;
+            if (input.value.length < 4) {
+                status.textContent = '❌ Пароль должен быть не менее 4 символов!';
+                status.style.color = '#ff5f56';
+                return;
+            }
+            systemPassword = input.value;
+            status.textContent = '✅ Пароль успешно изменён!';
+            status.style.color = 'var(--primary-color)';
+            input.value = '';
+            setTimeout(() => { status.textContent = ''; }, 3000);
+            showNotification('Пароль изменён! 🔑', '🔑');
+        }
+
+        // ============================================
+        // BG PARTICLES ENGINE
+        // ============================================
         const bgCanvas = document.getElementById('bg-canvas');
         const bgCtx = bgCanvas.getContext('2d');
         let particles = [];
-        let globalSpeedMultiplier = 1; 
+        let globalSpeedMultiplier = 1;
         let globalParticleSize = 2;
         let currentFx = 'matrix';
-
         const symbols = "0123456789$#@!ABCDEF%&*?";
 
         function resizeBgCanvas() {
@@ -485,9 +2021,7 @@
         function initFxParticles() {
             particles = [];
             if (currentFx === 'none') return;
-
             const count = currentFx === 'digital_rain' ? Math.floor(window.innerWidth / 15) : 60;
-
             for(let i = 0; i < count; i++) {
                 if (currentFx === 'matrix') {
                     particles.push({
@@ -517,14 +2051,14 @@
         }
 
         function animateParticles() {
-            if (currentFx === 'none' || document.body.style.backgroundImage) {
+            if (currentFx === 'none' || document.body.style.backgroundImage && document.body.style.backgroundImage !== 'none') {
                 bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
             } else {
-                bgCtx.fillStyle = 'rgba(5, 5, 16, 0.2)';
+                bgCtx.fillStyle = 'rgba(5, 5, 16, 0.12)';
                 bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
             }
 
-            if (currentFx !== 'none') {
+            if (currentFx !== 'none' && (!document.body.style.backgroundImage || document.body.style.backgroundImage === 'none')) {
                 const pColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 
                 particles.forEach(p => {
@@ -536,38 +2070,30 @@
                         bgCtx.fillStyle = pColor;
                         bgCtx.globalAlpha = p.alpha;
                         bgCtx.fill();
-
                         p.y += p.speedY * globalSpeedMultiplier;
                         if (p.y > bgCanvas.height) { p.y = -10; p.x = Math.random() * bgCanvas.width; }
-
                     } else if (currentFx === 'snow') {
                         bgCtx.beginPath();
                         bgCtx.arc(p.x, p.y, globalParticleSize, 0, Math.PI * 2);
-                        bgCtx.fillStyle = '#ffffff'; 
+                        bgCtx.fillStyle = '#ffffff';
                         bgCtx.globalAlpha = 0.85;
                         bgCtx.fill();
-
                         p.y += p.speedY * globalSpeedMultiplier;
                         p.angle += p.swing * globalSpeedMultiplier;
                         p.x += Math.sin(p.angle) * p.swingRange * (globalSpeedMultiplier > 0 ? 1 : 0);
-
                         if (p.y > bgCanvas.height) { p.y = -10; p.x = Math.random() * bgCanvas.width; }
                         if (p.x > bgCanvas.width) p.x = 0; else if (p.x < 0) p.x = bgCanvas.width;
-
                     } else if (currentFx === 'digital_rain') {
                         bgCtx.fillStyle = pColor;
                         bgCtx.font = `${globalParticleSize * 4}px monospace`;
-
                         p.chars.forEach((char, index) => {
                             bgCtx.globalAlpha = (index === 0) ? 1.0 : 1 / (index + 1);
                             const charY = p.y - (index * globalParticleSize * 4);
                             if (charY > 0 && charY < bgCanvas.height) { bgCtx.fillText(char, p.x, charY); }
-
                             if (Math.random() * 100 > 98 && globalSpeedMultiplier > 0) {
                                 p.chars[index] = symbols[Math.floor(Math.random() * symbols.length)];
                             }
                         });
-
                         p.y += p.speedY * globalSpeedMultiplier;
                         if (p.y - (p.chars.length * globalParticleSize * 4) > bgCanvas.height) {
                             p.y = -20; p.x = Math.random() * bgCanvas.width;
@@ -576,35 +2102,29 @@
                     bgCtx.restore();
                 });
             }
-
             requestAnimationFrame(animateParticles);
         }
 
         resizeBgCanvas();
         animateParticles();
 
-        function updateOpacityValue() {
-            const val = document.getElementById('opacity-sl').value;
-            document.getElementById('opacity-tx').innerText = val + '%';
-            const alpha = val / 100;
-            document.documentElement.style.setProperty('--glass-opacity', alpha);
-            saveSystemState();
-        }
-
+        // ============================================
+        // UI Controls
+        // ============================================
         function updateSystemTheme() {
             const hexColor = document.getElementById('sys-primary-color').value;
             document.documentElement.style.setProperty('--primary-color', hexColor);
-            
             let r = parseInt(hexColor.slice(1, 3), 16);
             let g = parseInt(hexColor.slice(3, 5), 16);
             let b = parseInt(hexColor.slice(5, 7), 16);
             document.documentElement.style.setProperty('--border-glass', `rgba(${r}, ${g}, ${b}, 0.25)`);
-            
+            document.documentElement.style.setProperty('--glow-color', `rgba(${r}, ${g}, ${b}, 0.3)`);
             if(document.getElementById('paintColor')) document.getElementById('paintColor').value = hexColor;
             document.getElementById('speed-tx').style.color = hexColor;
             document.getElementById('size-tx').style.color = hexColor;
             document.getElementById('opacity-tx').style.color = hexColor;
-            saveSystemState();
+            document.documentElement.style.setProperty('--accent-gradient', `linear-gradient(135deg, ${hexColor}, #7000ff, #ff00e6)`);
+            showNotification('Цвет обновлён! 🎨', '🎨');
         }
 
         function changeFxEffect() {
@@ -617,7 +2137,6 @@
                 document.getElementById('size-row').style.display = 'flex';
             }
             initFxParticles();
-            saveSystemState();
         }
 
         function updateSpeedValue() {
@@ -628,69 +2147,28 @@
             else if (val === 1) txt.innerText = "x1";
             else if (val === 10) txt.innerText = "x10 ⚡";
             else txt.innerText = "x" + val;
-            saveSystemState();
         }
 
         function updateParticleSize() {
             const val = parseInt(document.getElementById('size-sl').value);
             globalParticleSize = val;
             document.getElementById('size-tx').innerText = val + "px";
-            saveSystemState();
         }
 
-        function loadWallpaperFile(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.body.style.backgroundImage = `url('${e.target.result}')`;
-                    saveSystemState();
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
+        // ============================================
+        // CLOCK
+        // ============================================
+        function clock() { 
+            document.getElementById('system-tray').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); 
         }
+        setInterval(clock, 1000);
 
-        function applyCustomWallpaper() {
-            const url = document.getElementById('bg-url-input').value.trim();
-            if(url) {
-                document.body.style.backgroundImage = `url('${url}')`;
-                saveSystemState();
-            }
-        }
-
-        // --- Часы ---
-        function clock() { document.getElementById('system-tray').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
-        setInterval(clock, 1000); clock();
-
-        // СБРОС И ПЕРЕЗАГРУЗКА
-        function triggerResetReboot() {
-            document.getElementById('reboot-text').innerText = "Сброс данных и перезагрузка Windows 67...";
-            document.getElementById('reboot-screen').style.display = 'flex';
-            localStorage.clear(); 
-            setTimeout(() => { location.reload(); }, 1500);
-        }
-
-        // ЗАВЕРШЕНИЕ РАБОТЫ (ЗАКРЫТИЕ ВКЛАДКИ)
-        function triggerShutdown() {
-            document.getElementById('reboot-text').innerText = "Завершение работы системы...";
-            document.getElementById('reboot-screen').style.display = 'flex';
-            setTimeout(() => { 
-                window.close();
-                // Фолбэк на случай блокировки браузером прямой команды close
-                alert("Система отключена. Теперь вы можете закрыть эту вкладку самостоятельно.");
-            }, 1200);
-        }
-
-        // --- Буфер Обмена и Файлы ---
-        let fileClipboard = null;
-        let isCutOperation = false;
-        let currentRightClickedFile = null;
-        let currentFolder = 'root';
-        let contextTargetArea = 'desktop';
-        let isCustomAppRightClicked = false;
-
+        // ============================================
+        // FILE SYSTEM
+        // ============================================
         let filesData = {
             root: [
-                {name: 'Ядро_Системы.sys', content: 'Конфигурация Build 7.6 Active.', icon: '⚙️'}, 
+                {name: 'Ядро_Системы.sys', content: 'Windows 67 Premium Candy Edition', icon: '⚙️'},
                 {name: 'Инструкция.txt', content: 'Вырежи или скопируй меня через ПКМ и вставь на рабочий стол!', icon: '📄'}
             ],
             docs: []
@@ -698,132 +2176,42 @@
         let desktopFiles = [];
         let installedAppsList = [];
 
-        window.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            const desktopMenu = document.getElementById('desktop-menu');
-            const fileMenu = document.getElementById('file-menu');
-            const pasteItem = document.getElementById('menu-paste-item');
-            const deleteItem = document.getElementById('menu-delete-item');
-            
-            desktopMenu.style.display = 'none';
-            fileMenu.style.display = 'none';
-            isCustomAppRightClicked = false;
-
-            if (fileClipboard) pasteItem.classList.remove('disabled');
-            else pasteItem.classList.add('disabled');
-
-            const fileItem = e.target.closest('.file-item') || e.target.closest('.shortcut[data-file="true"]');
-            const customAppItem = e.target.closest('.shortcut[data-custom-app="true"]');
-            
-            if (customAppItem) {
-                currentRightClickedFile = customAppItem.id.replace('sh-', '');
-                isCustomAppRightClicked = true;
-                deleteItem.innerText = "🗑️ Удалить приложение";
-                fileMenu.style.display = 'flex';
-                fileMenu.style.left = e.clientX + 'px';
-                fileMenu.style.top = e.clientY + 'px';
-            } else if (fileItem) {
-                currentRightClickedFile = fileItem.getAttribute('data-name');
-                contextTargetArea = fileItem.hasAttribute('data-desktop') ? 'desktop' : 'explorer';
-                deleteItem.innerText = "🗑️ Удалить";
-                fileMenu.style.display = 'flex';
-                fileMenu.style.left = e.clientX + 'px';
-                fileMenu.style.top = e.clientY + 'px';
-            } else {
-                if (e.target.closest('#win-explorer') || e.target.closest('#explorer-content-zone')) contextTargetArea = 'explorer';
-                else contextTargetArea = 'desktop';
-                desktopMenu.style.display = 'flex';
-                desktopMenu.style.left = e.clientX + 'px';
-                desktopMenu.style.top = e.clientY + 'px';
-            }
-        });
-
-        window.addEventListener('click', function() {
-            document.getElementById('desktop-menu').style.display = 'none';
-            document.getElementById('file-menu').style.display = 'none';
-        });
-
-        function contextOpenFile() {
-            if(isCustomAppRightClicked) { openWindow(currentRightClickedFile); return; }
-            if(!currentRightClickedFile) return;
-            let file = (contextTargetArea === 'desktop') ? desktopFiles.find(f => f.name === currentRightClickedFile) : filesData[currentFolder].find(f => f.name === currentRightClickedFile);
-            if(file) { document.getElementById('notepad-text').value = file.content; openWindow('win-notepad'); }
-        }
-
-        function contextCopyFile() {
-            if(isCustomAppRightClicked) return;
-            if(!currentRightClickedFile) return;
-            let file = (contextTargetArea === 'desktop') ? desktopFiles.find(f => f.name === currentRightClickedFile) : filesData[currentFolder].find(f => f.name === currentRightClickedFile);
-            if(file) { fileClipboard = { ...file }; isCutOperation = false; }
-        }
-
-        function contextCutFile() {
-            if(isCustomAppRightClicked) return;
-            if(!currentRightClickedFile) return;
-            let idx;
-            if (contextTargetArea === 'desktop') {
-                idx = desktopFiles.findIndex(f => f.name === currentRightClickedFile);
-                if (idx > -1) { fileClipboard = desktopFiles.splice(idx, 1)[0]; isCutOperation = true; renderDesktopFiles(); saveSystemState(); }
-            } else {
-                idx = filesData[currentFolder].findIndex(f => f.name === currentRightClickedFile);
-                if(idx > -1) { fileClipboard = filesData[currentFolder].splice(idx, 1)[0]; isCutOperation = true; renderFiles(currentFolder); saveSystemState(); }
-            }
-        }
-
-        function contextPasteFile() {
-            if (!fileClipboard) return;
-            let targetList = (contextTargetArea === 'desktop') ? desktopFiles : filesData[currentFolder];
-            let newName = fileClipboard.name;
-            let counter = 1;
-            while(targetList.some(f => f.name === newName)) {
-                let parts = fileClipboard.name.split('.');
-                if(parts.length > 1) {
-                    let ext = parts.pop(); newName = `${parts.join('.')}_копия${counter}.${ext}`;
-                } else { newName = `${fileClipboard.name}_копия${counter}`; }
-                counter++;
-            }
-
-            let fileToPaste = { ...fileClipboard, name: newName };
-            targetList.push(fileToPaste);
-            if (isCutOperation) fileClipboard = null;
-
-            renderFiles(currentFolder);
-            renderDesktopFiles();
-            saveSystemState();
-        }
-
-        function contextDeleteFile() {
-            if (isCustomAppRightClicked) {
-                uninstallCustomApp(currentRightClickedFile);
-                return;
-            }
-            if(!currentRightClickedFile) return;
-            if (contextTargetArea === 'desktop') { desktopFiles = desktopFiles.filter(f => f.name !== currentRightClickedFile); renderDesktopFiles(); }
-            else { filesData[currentFolder] = filesData[currentFolder].filter(f => f.name !== currentRightClickedFile); renderFiles(currentFolder); }
-            saveSystemState();
-        }
-
         function renderDesktopFiles() {
             document.querySelectorAll('.shortcut[data-file="true"]').forEach(el => el.remove());
             const desktop = document.getElementById('desktop');
             desktopFiles.forEach(f => {
-                const item = document.createElement('div'); item.className = 'shortcut';
-                item.setAttribute('data-file', 'true'); item.setAttribute('data-name', f.name); item.setAttribute('data-desktop', 'true');
+                const item = document.createElement('div');
+                item.className = 'shortcut';
+                item.setAttribute('data-file', 'true');
+                item.setAttribute('data-name', f.name);
+                item.setAttribute('data-desktop', 'true');
                 item.innerHTML = `<div class="icon">${f.icon}</div><div class="title">${f.name}</div>`;
-                item.onclick = () => { document.getElementById('notepad-text').value = f.content; openWindow('win-notepad'); };
+                item.onclick = () => {
+                    document.getElementById('notepad-text').value = f.content;
+                    openWindow('win-notepad');
+                };
                 desktop.appendChild(item);
             });
         }
 
         function changeFolder(folder) { currentFolder = folder; renderFiles(folder); }
         function renderFiles(folder) {
-            const grid = document.getElementById('explorer-files'); if(!grid) return;
+            const grid = document.getElementById('explorer-files');
+            if (!grid) return;
             grid.innerHTML = '';
+            if (!filesData[folder]) return;
             filesData[folder].forEach(f => {
-                const item = document.createElement('div'); item.className = 'file-item';
+                const item = document.createElement('div');
+                item.className = 'file-item';
                 item.setAttribute('data-name', f.name);
-                item.innerHTML = `<div style="font-size:32px">${f.icon}</div><div style="font-size:11px; margin-top:4px; word-break:break-all;">${f.name}</div>`;
-                item.ondblclick = () => { document.getElementById('notepad-text').value = f.content; openWindow('win-notepad'); };
+                item.innerHTML = `
+                    <span class="file-icon">${f.icon}</span>
+                    <span class="file-name">${f.name}</span>
+                `;
+                item.ondblclick = () => {
+                    document.getElementById('notepad-text').value = f.content;
+                    openWindow('win-notepad');
+                };
                 grid.appendChild(item);
             });
         }
@@ -832,48 +2220,88 @@
             const text = document.getElementById('notepad-text').value;
             filesData.docs.push({name: `Заметка_${filesData.docs.length + 1}.txt`, content: text, icon: '📄'});
             renderFiles(currentFolder);
-            saveSystemState();
-            alert('Сохранено в папку Документы!');
+            showNotification('Сохранено в Документы! 💾', '💾');
         }
 
-        // --- Управление Окнами ---
-        let topZ = 100; const openWindows = new Set();
-        function toggleStart() { document.getElementById('start-menu').classList.toggle('active'); }
-        function openWindow(id) {
-            const win = document.getElementById(id); win.classList.add('active'); win.classList.remove('minimized');
-            topZ++; win.style.zIndex = topZ;
-            if(!win.style.top && !win.classList.contains('maximized')) { win.style.top = '12%'; win.style.left = '22%'; }
-            openWindows.add(id); updateTaskbar();
-            if(id === 'win-paint') setTimeout(initPaint, 80);
+        // ============================================
+        // WINDOW MANAGEMENT
+        // ============================================
+        let topZ = 100;
+        const openWindows = new Set();
+        
+        function toggleStart() {
+            if (!isLoggedIn) return;
+            document.getElementById('start-menu').classList.toggle('active');
         }
-        function closeWindow(id) { document.getElementById(id).classList.remove('active'); openWindows.delete(id); updateTaskbar(); }
+        
+        function openWindow(id) {
+            if (!isLoggedIn) return;
+            const win = document.getElementById(id);
+            if (!win) return;
+            win.classList.add('active');
+            win.classList.remove('minimized');
+            topZ++;
+            win.style.zIndex = topZ;
+            if (!win.style.top && !win.classList.contains('maximized')) {
+                win.style.top = '10%';
+                win.style.left = '20%';
+            }
+            openWindows.add(id);
+            updateTaskbar();
+            if (id === 'win-paint') setTimeout(initPaint, 100);
+            if (id === 'win-recycle') renderRecycleList();
+        }
+        
+        function closeWindow(id) {
+            const win = document.getElementById(id);
+            if (win) { win.classList.remove('active'); }
+            openWindows.delete(id);
+            updateTaskbar();
+        }
+        
         function minimizeWindow(id) { document.getElementById(id).classList.add('minimized'); }
-        function maximizeWindow(id) { document.getElementById(id).classList.toggle('maximized'); if(id==='win-paint') setTimeout(initPaint, 150); }
+        function maximizeWindow(id) { document.getElementById(id).classList.toggle('maximized'); if (id === 'win-paint') setTimeout(initPaint, 150); }
 
         function updateTaskbar() {
-            const bar = document.getElementById('taskbar-apps'); bar.innerHTML = '';
+            const bar = document.getElementById('taskbar-apps');
+            bar.innerHTML = '';
             openWindows.forEach(id => {
                 const winEl = document.getElementById(id);
                 if (!winEl) return;
-                const btn = document.createElement('button'); btn.className = 'action-btn';
-                btn.innerText = winEl.querySelector('.window-title').innerText;
+                const btn = document.createElement('button');
+                btn.className = 'action-btn';
+                btn.style.cssText = 'padding:4px 14px; font-size:12px; background:rgba(255,255,255,0.05); border:1px solid var(--border-glass); border-radius:8px; color:var(--text-color); cursor:pointer; transition:0.3s;';
+                const titleEl = winEl.querySelector('.window-title');
+                btn.innerText = titleEl ? titleEl.innerText : id;
+                btn.onmouseover = () => { btn.style.background = 'rgba(255,255,255,0.1)'; btn.style.transform = 'scale(1.05)'; };
+                btn.onmouseout = () => { btn.style.background = 'rgba(255,255,255,0.05)'; btn.style.transform = 'scale(1)'; };
                 btn.onclick = () => {
                     const win = document.getElementById(id);
-                    if(win.classList.contains('minimized')) { win.classList.remove('minimized'); topZ++; win.style.zIndex = topZ; }
-                    else { win.classList.add('minimized'); }
+                    if (win) {
+                        if (win.classList.contains('minimized')) {
+                            win.classList.remove('minimized');
+                            topZ++;
+                            win.style.zIndex = topZ;
+                        } else {
+                            win.classList.add('minimized');
+                        }
+                    }
                 };
                 bar.appendChild(btn);
             });
         }
 
-        // --- ВСТРОЕННЫЙ PAINT ---
+        // ============================================
+        // PAINT
+        // ============================================
         const paintCanvas = document.getElementById('paintCanvas');
         const paintCtx = paintCanvas.getContext('2d');
         let paintPainting = false;
 
         function initPaint() {
             const container = document.getElementById('paint-container');
-            if(paintCanvas.width !== container.clientWidth - 20) {
+            if (!container) return;
+            if (paintCanvas.width !== container.clientWidth - 20) {
                 paintCanvas.width = container.clientWidth - 20;
                 paintCanvas.height = container.clientHeight - 20;
                 clearPaintCanvas();
@@ -882,7 +2310,7 @@
 
         paintCanvas.addEventListener('mousedown', (e) => { paintPainting = true; paintCtx.beginPath(); drawPaint(e); });
         paintCanvas.addEventListener('mousemove', drawPaint);
-        window.addEventListener('mouseup', () => { if(paintPainting) { paintPainting = false; paintCtx.beginPath(); } });
+        window.addEventListener('mouseup', () => { if (paintPainting) { paintPainting = false; paintCtx.beginPath(); } });
 
         function drawPaint(e) {
             if (!paintPainting) return;
@@ -894,22 +2322,32 @@
             const mode = document.getElementById('paintBrush').value;
 
             paintCtx.save();
-            paintCtx.lineWidth = size; paintCtx.lineCap = 'round'; paintCtx.lineJoin = 'round'; paintCtx.strokeStyle = color;
+            paintCtx.lineWidth = size;
+            paintCtx.lineCap = 'round';
+            paintCtx.lineJoin = 'round';
+            paintCtx.strokeStyle = color;
 
-            if (mode === 'neon') { paintCtx.shadowBlur = size; paintCtx.shadowColor = color; }
+            if (mode === 'neon') { paintCtx.shadowBlur = size * 2; paintCtx.shadowColor = color; }
             else if (mode === 'blur') { paintCtx.globalAlpha = 0.15; }
             else { paintCtx.shadowBlur = 0; paintCtx.globalAlpha = 1.0; }
 
-            paintCtx.lineTo(x, y); paintCtx.stroke();
-            paintCtx.beginPath(); paintCtx.moveTo(x, y);
+            paintCtx.lineTo(x, y);
+            paintCtx.stroke();
+            paintCtx.beginPath();
+            paintCtx.moveTo(x, y);
             paintCtx.restore();
         }
 
         function clearPaintCanvas() {
-            paintCtx.fillStyle = '#1e1e1e'; paintCtx.fillRect(0, 0, paintCanvas.width, paintCanvas.height); paintCtx.beginPath();
+            paintCtx.fillStyle = '#1a1a2e';
+            paintCtx.fillRect(0, 0, paintCanvas.width, paintCanvas.height);
+            paintCtx.beginPath();
+            showNotification('Холст очищен 🧹', '🧹');
         }
 
-        // --- УСТАНОВКА HTML ПРИЛОЖЕНИЙ ---
+        // ============================================
+        // CUSTOM APP INSTALLER
+        // ============================================
         let customAppCodeBuffer = "";
 
         function loadCustomHtmlApp(input) {
@@ -918,8 +2356,11 @@
             reader.onload = (e) => {
                 customAppCodeBuffer = e.target.result;
                 const status = document.getElementById('customFileStatus');
-                status.innerText = `Файл "${input.files[0].name}" считан!`;
-                status.style.display = 'block';
+                if (status) {
+                    status.innerText = `✅ Файл "${input.files[0].name}" считан!`;
+                    status.style.display = 'block';
+                }
+                showNotification('Файл загружен! 📁', '📁');
             };
             reader.readAsText(input.files[0]);
         }
@@ -933,10 +2374,10 @@
                 icon = restoringData.icon;
                 code = restoringData.code;
             } else {
-                name = document.getElementById('customAppName').value.trim();
-                icon = document.getElementById('customAppIcon').value.trim() || '🚀';
-                if (!name) { alert('Введите имя приложения!'); return; }
-                if (!customAppCodeBuffer) { alert('Сначала выберите HTML-файл!'); return; }
+                name = document.getElementById('customAppName')?.value.trim();
+                icon = document.getElementById('customAppIcon')?.value.trim() || '🚀';
+                if (!name) { showNotification('Введите имя приложения!', '⚠️'); return; }
+                if (!customAppCodeBuffer) { showNotification('Сначала выберите HTML-файл!', '⚠️'); return; }
                 appId = 'app-' + Date.now();
                 code = customAppCodeBuffer;
             }
@@ -945,7 +2386,7 @@
             const url = URL.createObjectURL(blob);
 
             const win = document.createElement('div');
-            win.className = 'window';
+            win.className = 'window glass';
             win.id = appId;
             win.style.width = '750px';
             win.style.height = '500px';
@@ -953,13 +2394,13 @@
                 <div class="window-header">
                     <div class="window-title">${icon} ${name}</div>
                     <div class="window-controls">
-                        <button class="win-btn" onclick="minimizeWindow('${appId}')">—</button>
-                        <button class="win-btn" onclick="maximizeWindow('${appId}')">🗖</button>
+                        <button class="win-btn btn-min" onclick="minimizeWindow('${appId}')">—</button>
+                        <button class="win-btn btn-max" onclick="maximizeWindow('${appId}')">🗖</button>
                         <button class="win-btn btn-close" onclick="closeWindow('${appId}')">✕</button>
                     </div>
                 </div>
                 <div class="window-content" style="padding:0; overflow:hidden;">
-                    <iframe src="${url}" style="width:100%; height:100%; border:none; background:#fff;"></iframe>
+                    <iframe src="${url}" style="width:100%; height:100%; border:none;"></iframe>
                 </div>
             `;
             document.body.appendChild(win);
@@ -980,76 +2421,46 @@
             item.className = 'start-item';
             item.id = 'start-' + appId;
             item.onclick = () => { openWindow(appId); toggleStart(); };
-            item.innerHTML = `<span>${icon}</span><span>${name}</span>`;
+            item.innerHTML = `<span class="icon">${icon}</span> ${name}`;
             startMenu.insertBefore(item, startSeparator);
 
             if (!restoringData) {
                 installedAppsList.push({ id: appId, name: name, icon: icon, code: code });
-                document.getElementById('customAppName').value = '';
-                document.getElementById('customAppIcon').value = '🚀';
-                document.getElementById('customFileStatus').style.display = 'none';
-                document.getElementById('customAppFile').value = '';
+                renderStartMenuApps();
+                if (document.getElementById('customAppName')) document.getElementById('customAppName').value = '';
+                if (document.getElementById('customAppIcon')) document.getElementById('customAppIcon').value = '🚀';
+                if (document.getElementById('customFileStatus')) document.getElementById('customFileStatus').style.display = 'none';
+                if (document.getElementById('customAppFile')) document.getElementById('customAppFile').value = '';
                 customAppCodeBuffer = "";
                 closeWindow('win-installer');
                 openWindow(appId);
-                saveSystemState();
+                showNotification(`Приложение "${name}" установлено! 📦`, '📦');
+            } else {
+                renderStartMenuApps();
             }
         }
 
-        function uninstallCustomApp(appId) {
-            if (!confirm("Вы действительно хотите удалить это приложение и все его ярлыки?")) return;
-
-            closeWindow(appId);
-
-            const winEl = document.getElementById(appId);
-            const shEl = document.getElementById('sh-' + appId);
-            const startEl = document.getElementById('start-' + appId);
-
-            if (winEl) winEl.remove();
-            if (shEl) shEl.remove();
-            if (startEl) startEl.remove();
-
-            installedAppsList = installedAppsList.filter(app => app.id !== appId);
-            updateTaskbar();
-            saveSystemState();
-        }
-
-        // --- Кастомизация скруглений ---
-        function updateStyles() {
-            const rnd = document.getElementById('round-sl').value;
-            document.documentElement.style.setProperty('--window-round', rnd + 'px');
-            document.getElementById('round-tx').innerText = rnd + 'px';
-            saveSystemState();
-        }
-
-        // --- Калькулятор ---
-        const calcDisp = document.getElementById('calc-display');
-        function pressCalc(v) { if(calcDisp.value === '0') calcDisp.value = ''; calcDisp.value += v; }
-        function clearCalc() { calcDisp.value = '0'; }
-        function calculateResult() { try { calcDisp.value = eval(calcDisp.value); } catch(e) { calcDisp.value = 'Ошибка'; } }
-
-        // --- Терминал ---
-        function executeCommand() {
-            const input = document.getElementById('console-cmd'); const log = document.getElementById('console-output');
-            const cmd = input.value.trim().toLowerCase(); if(!cmd) return;
-            log.innerHTML += `<div>WIN67:\\> ${input.value}</div>`;
-            if(cmd === 'help') log.innerHTML += `<div>Команды: help, hack, clear, reset</div>`;
-            else if(cmd === 'hack') log.innerHTML += `<div style="color:red;">[Взлом системного мейнфрейма...]</div>`;
-            else if(cmd === 'clear') log.innerHTML = '';
-            else if(cmd === 'reset') { triggerResetReboot(); }
-            else log.innerHTML += `<div>Неизвестная команда.</div>`;
-            input.value = ''; log.scrollTop = log.scrollHeight;
-        }
-
-        // --- Перетаскивание окон ---
+        // ============================================
+        // DRAG WINDOWS
+        // ============================================
         function bindDragToHeader(h) {
             h.addEventListener('mousedown', (e) => {
-                if(e.target.classList.contains('win-btn') || h.parentElement.classList.contains('maximized')) return;
-                const win = h.parentElement; topZ++; win.style.zIndex = topZ;
-                let sX = e.clientX - win.getBoundingClientRect().left, sY = e.clientY - win.getBoundingClientRect().top;
-                function move(ev) { win.style.left = ev.clientX - sX + 'px'; win.style.top = ev.clientY - sY + 'px'; }
+                if (e.target.classList.contains('win-btn') || h.parentElement.classList.contains('maximized')) return;
+                const win = h.parentElement;
+                topZ++;
+                win.style.zIndex = topZ;
+                let sX = e.clientX - win.getBoundingClientRect().left,
+                    sY = e.clientY - win.getBoundingClientRect().top;
+
+                function move(ev) {
+                    win.style.left = ev.clientX - sX + 'px';
+                    win.style.top = ev.clientY - sY + 'px';
+                }
                 document.addEventListener('mousemove', move);
-                document.onmouseup = () => { document.removeEventListener('mousemove', move); document.onmouseup = null; };
+                document.onmouseup = () => {
+                    document.removeEventListener('mousemove', move);
+                    document.onmouseup = null;
+                };
             });
         }
 
@@ -1057,81 +2468,53 @@
 
         document.addEventListener('click', function(e) {
             const m = document.getElementById('start-menu');
-            if(!m.contains(e.target) && e.target !== document.getElementById('start-btn')) m.classList.remove('active');
+            if (m && !m.contains(e.target) && e.target !== document.getElementById('start-btn')) {
+                m.classList.remove('active');
+            }
         });
 
-        // --- ДВИЖОК СОХРАНЕНИЙ (LOCALSTORAGE ENGINE) ---
-        function saveSystemState() {
-            const state = {
-                primaryColor: document.getElementById('sys-primary-color').value,
-                opacity: document.getElementById('opacity-sl').value,
-                fxEffect: document.getElementById('fx-select').value,
-                speed: document.getElementById('speed-sl').value,
-                particleSize: document.getElementById('size-sl').value,
-                round: document.getElementById('round-sl').value,
-                wallpaper: document.body.style.backgroundImage,
-                filesData: filesData,
-                desktopFiles: desktopFiles,
-                installedApps: installedAppsList
-            };
-            localStorage.setItem('win67_save_state', JSON.stringify(state));
+        // ============================================
+        // CALCULATOR
+        // ============================================
+        const calcDisp = document.getElementById('calc-display');
+        function pressCalc(v) { if (calcDisp.value === '0') calcDisp.value = ''; calcDisp.value += v; }
+        function clearCalc() { calcDisp.value = '0'; }
+        function calculateResult() { try { calcDisp.value = eval(calcDisp.value); } catch (e) { calcDisp.value = 'Ошибка'; } }
+
+        // ============================================
+        // CONSOLE
+        // ============================================
+        function executeCommand() {
+            const input = document.getElementById('console-cmd');
+            const log = document.getElementById('console-output');
+            const cmd = input.value.trim().toLowerCase();
+            if (!cmd) return;
+            log.innerHTML += `<div>WIN67:\\> ${input.value}</div>`;
+            if (cmd === 'help') log.innerHTML += `<div>Команды: help, hack, clear, reboot, theme</div>`;
+            else if (cmd === 'hack') log.innerHTML += `<div style="color:#ff00ff;">[Взлом системного мейнфрейма...] ✨</div>`;
+            else if (cmd === 'clear') log.innerHTML = '';
+            else if (cmd === 'reboot') { triggerReboot(); }
+            else if (cmd === 'theme') { 
+                const themes = ['dark', 'light', 'dark-blue', 'matrix', 'sunset', 'pink'];
+                const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+                applyTheme(randomTheme);
+                log.innerHTML += `<div>Тема изменена на: ${randomTheme} 🎨</div>`;
+            }
+            else log.innerHTML += `<div>Неизвестная команда. Введите 'help'</div>`;
+            input.value = '';
+            log.scrollTop = log.scrollHeight;
         }
 
-        function loadSystemState() {
-            const saved = localStorage.getItem('win67_save_state');
-            if (!saved) {
-                renderFiles('root');
-                return;
-            }
-            try {
-                const state = JSON.parse(saved);
+        // ============================================
+        // INIT
+        // ============================================
+        document.getElementById('desktop').classList.remove('active');
+        document.getElementById('taskbar').classList.remove('active');
+        document.getElementById('login-password').focus();
 
-                // Загрузка темы
-                document.getElementById('sys-primary-color').value = state.primaryColor || '#00f0ff';
-                updateSystemTheme();
-
-                // Прозрачность
-                document.getElementById('opacity-sl').value = state.opacity || '75';
-                updateOpacityValue();
-
-                // Эффекты
-                document.getElementById('fx-select').value = state.fxEffect || 'matrix';
-                document.getElementById('speed-sl').value = state.speed || '1';
-                document.getElementById('size-sl').value = state.particleSize || '2';
-                currentFx = state.fxEffect || 'matrix';
-                globalSpeedMultiplier = parseFloat(state.speed || '1');
-                globalParticleSize = parseInt(state.particleSize || '2');
-                changeFxEffect();
-                updateSpeedValue();
-                updateParticleSize();
-
-                // Скругления
-                document.getElementById('round-sl').value = state.round || '12';
-                updateStyles();
-
-                // Обои
-                if (state.wallpaper) document.body.style.backgroundImage = state.wallpaper;
-
-                // Файлы
-                if (state.filesData) filesData = state.filesData;
-                if (state.desktopFiles) desktopFiles = state.desktopFiles;
-                renderFiles(currentFolder);
-                renderDesktopFiles();
-
-                // Восстановление установленных приложений
-                if (state.installedApps) {
-                    installedAppsList = state.installedApps;
-                    installedAppsList.forEach(app => installCustomHtmlApp(app));
-                }
-
-            } catch (e) {
-                console.error("Ошибка восстановления ОС: ", e);
-                renderFiles('root');
-            }
-        }
-
-        // Инициализация при старте
-        loadSystemState();
+        console.log('✦ Windows 67 — Premium Candy Edition 🍬');
+        console.log('🔑 Пароль по умолчанию: 1234');
+        console.log('✨ Наслаждайтесь конфеткой!');
     </script>
 </body>
 </html>
